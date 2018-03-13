@@ -1,0 +1,5 @@
+D:\代码\DirectSoundLib\CSAudioLib\bin\Debug\CSAudioLib.dll
+D:\代码\DirectSoundLib\CSAudioLib\bin\Debug\CSAudioLib.pdb
+D:\代码\DirectSoundLib\CSAudioLib\obj\Debug\CSAudioLib.csprojResolveAssemblyReference.cache
+D:\代码\DirectSoundLib\CSAudioLib\obj\Debug\CSAudioLib.dll
+D:\代码\DirectSoundLib\CSAudioLib\obj\Debug\CSAudioLib.pdb

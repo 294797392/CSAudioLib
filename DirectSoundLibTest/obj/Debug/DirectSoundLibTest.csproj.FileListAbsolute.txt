@@ -1,0 +1,15 @@
+D:\代码\DirectSoundLib\DirectSoundLibTest\bin\Debug\DirectSoundLibTest.exe
+D:\代码\DirectSoundLib\DirectSoundLibTest\bin\Debug\DirectSoundLibTest.pdb
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest.csprojResolveAssemblyReference.cache
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\MainWindow.g.cs
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\App.g.cs
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest_MarkupCompile.cache
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest_MarkupCompile.lref
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\MainWindow.baml
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest.g.resources
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest.Properties.Resources.resources
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest.csproj.GenerateResource.Cache
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest.exe
+D:\代码\DirectSoundLib\DirectSoundLibTest\obj\Debug\DirectSoundLibTest.pdb
+D:\代码\DirectSoundLib\DirectSoundLibTest\bin\Debug\DirectSoundLib.dll
+D:\代码\DirectSoundLib\DirectSoundLibTest\bin\Debug\DirectSoundLib.pdb
