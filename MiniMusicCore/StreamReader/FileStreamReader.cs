@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace MiniMusic.StreamReader
+namespace MiniMusicCore.StreamReader
 {
     /// <summary>
     /// 从本地文件读取音频流

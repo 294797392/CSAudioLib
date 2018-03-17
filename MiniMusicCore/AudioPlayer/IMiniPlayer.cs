@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MiniMusic.StreamReader
+namespace MiniMusicCore.AudioPlayer
 {
-    class RtpStreamReader
+    public interface IMiniPlayer
     {
     }
 }

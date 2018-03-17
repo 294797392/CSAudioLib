@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MiniMusic.AudioDecoder
+namespace MiniMusicCore.AudioDecoder
 {
     /// <summary>
     /// mpg123编码库错误码定义

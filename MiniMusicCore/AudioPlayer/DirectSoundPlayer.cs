@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MiniMusic.AudioPlayer
+namespace MiniMusicCore.AudioPlayer
 {
     public class DirectSoundPlayer : IMiniPlayer
     {

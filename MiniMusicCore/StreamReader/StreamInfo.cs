@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MiniMusic.StreamReader
+namespace MiniMusicCore.StreamReader
 {
     /// <summary>
     /// 存储音频流的信息

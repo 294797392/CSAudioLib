@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MiniMusic
+namespace MiniMusicCore
 {
     public class Natives
     {
