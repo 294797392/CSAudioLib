@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectSoundLib", "DirectSoundLib\DirectSoundLib.csproj", "{C95B8FAE-6CC5-4D6D-9B80-A50643AE472A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectSoundLibTest", "DirectSoundLibTest\DirectSoundLibTest.csproj", "{4F6E29A6-304D-4EAC-AB7A-205D730BD2DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniMusic", "DirectSoundLibTest\MiniMusic.csproj", "{4F6E29A6-304D-4EAC-AB7A-205D730BD2DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

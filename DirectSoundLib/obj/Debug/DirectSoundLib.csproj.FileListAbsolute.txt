@@ -6,4 +6,3 @@ D:\代码\DirectSoundLib\DirectSoundLib\obj\Debug\DirectSoundLib.dll
 D:\代码\DirectSoundLib\DirectSoundLib\obj\Debug\DirectSoundLib.pdb
 D:\代码\DirectSoundLib\DirectSoundLib\bin\Debug\DirectSoundLib.dll
 D:\代码\DirectSoundLib\DirectSoundLib\bin\Debug\DirectSoundLib.pdb
-D:\代码\DirectSoundLib\DirectSoundLib\obj\Debug\DirectSoundLib.csprojResolveAssemblyReference.cache

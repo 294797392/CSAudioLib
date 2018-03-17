@@ -51,7 +51,6 @@
     <Compile Include="IDirectSoundNotify8.cs" />
     <Compile Include="IID.cs" />
     <Compile Include="MacroDefinitions.cs" />
-    <Compile Include="mpg123.cs" />
     <Compile Include="WAVEFORMATEX.cs" />
     <Compile Include="DSBPOSITIONNOTIFY.cs" />
     <Compile Include="DSCAPS.cs" />
