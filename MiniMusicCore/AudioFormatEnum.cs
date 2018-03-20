@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MiniMusicCore.AudioPlayer
+namespace MiniMusicCore
 {
-    public interface IMiniPlayer
+    public enum AudioFormatEnum
     {
+        PCM,
+
+        MP3
     }
 }

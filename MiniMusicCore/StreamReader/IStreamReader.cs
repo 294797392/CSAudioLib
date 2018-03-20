@@ -13,7 +13,7 @@ namespace MiniMusicCore.StreamReader
     {
         #region 事件
 
-        public event Action<StreamInfo> OnStreamInfo;
+        public event Action<byte[]> DataAvailable;
 
         /// <summary>
         /// 流的位置发生改变
@@ -37,7 +37,15 @@ namespace MiniMusicCore.StreamReader
 
         #region 属性
 
-        public string Uri { get; set; }
+        /// <summary>
+        /// 获取或设置音频源
+        /// </summary>
+        public Uri Source { get; set; }
+
+        /// <summary>
+        /// 是否正在下载音频流
+        /// </summary>
+        public bool IsDownloading { get { return this.isDownloading; } }
 
         #endregion
 
@@ -50,16 +58,6 @@ namespace MiniMusicCore.StreamReader
         #endregion
 
         #region 公开接口
-
-        /// <summary>
-        /// 获取或设置音频源
-        /// </summary>
-        public Uri Source { get; set; }
-
-        /// <summary>
-        /// 是否正在下载音频流
-        /// </summary>
-        public bool IsDownloading { get { return this.isDownloading; } }
 
         /// <summary>
         /// 打开音频流
@@ -106,6 +104,14 @@ namespace MiniMusicCore.StreamReader
             if (this.PositionChanged != null)
             {
                 this.PositionChanged(percent);
+            }
+        }
+
+        protected void NotifyDataAvailable(byte[] data)
+        {
+            if(this.DataAvailable != null)
+            {
+                this.DataAvailable(data);
             }
         }
 

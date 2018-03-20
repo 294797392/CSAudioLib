@@ -45,10 +45,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioDecoder\mpg123.cs" />
-    <Compile Include="AudioPlayer\DirectSoundPlayer.cs" />
-    <Compile Include="AudioPlayer\IMiniPlayer.cs" />
-    <Compile Include="AudioPlayer\PlayStatus.cs" />
+    <Compile Include="AudioDecoders\MP3Decoder.cs" />
+    <Compile Include="AudioFormatEnum.cs" />
+    <Compile Include="AudioDecoders\IAudioDecoder.cs" />
+    <Compile Include="AudioDecoders\mpg123.cs" />
+    <Compile Include="MusicPlayer\DirectSoundPlayer.cs" />
+    <Compile Include="MusicPlayer\IMiniPlayer.cs" />
+    <Compile Include="MusicPlayer\PlayStatus.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Natives.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="StreamReader\IStreamReader.cs" />
     <Compile Include="StreamReader\RtpStreamReader.cs" />
     <Compile Include="StreamReader\StreamInfo.cs" />
+    <Compile Include="StreamReader\StreamReaderFactory.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

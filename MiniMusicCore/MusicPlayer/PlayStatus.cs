@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MiniMusicCore.AudioPlayer
+namespace MiniMusicCore.MusicPlayer
 {
     public enum PlayStatus
     {

@@ -1,4 +1,5 @@
 ﻿using DirectSoundLib;
+using MiniMusicCore.StreamReader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MiniMusicCore.AudioPlayer
+namespace MiniMusicCore.MusicPlayer
 {
     public class DirectSoundPlayer : IMiniPlayer
     {
@@ -62,9 +63,9 @@ namespace MiniMusicCore.AudioPlayer
 
         private PlayStatus status;
 
-        private double progress; // 当前播放进度
-
-        private bool isInit;
+        private IStreamReader reader;
+        private IAudioDecoder decoder;
+        private bool isFormatDetected = false;
 
         #endregion
 
@@ -116,23 +117,72 @@ namespace MiniMusicCore.AudioPlayer
 
         #region 公开接口
 
-        public int Initialize()
+        public int Open()
         {
-            this.isInit = true;
+            int ret = ResponseCode.Success;
 
-            if ((this.CreateIDirectSound8(this.WindowHandle) &&
-                this.CreateSecondaryBuffer() &&
-                this.CreateBufferNotifications()))
+            if (this.CreateIDirectSound8(this.WindowHandle))
             {
-
+                return ResponseCode.AP_DS_ERROR;
             }
+
+            this.reader = StreamReaderFactory.Create(this.Source);
+            this.reader.DataAvailable += StreamReader_DataAvailable;
+            this.reader.PositionChanged += StreamReader_PositionChanged;
+            this.reader.DownloadProgressChanged += StreamReader_DownloadProgressChanged;
+
+            this.decoder = new MP3Decoder();
+
+            //if ((this.CreateIDirectSound8(this.WindowHandle) &&
+            //    this.CreateSecondaryBuffer() &&
+            //    this.CreateBufferNotifications()))
+            //{
+
+            //}
+
+            //this.stream = IAudioStream.Create(source);
+            //if (this.stream == null)
+            //{
+            //    DSLibUtils.PrintLog("不支持的音频源:{0}", source);
+            //    return DSLibErrors.NOT_SUPPORTED;
+            //}
+
+            //int ret = this.stream.Open();
+            //if (ret != DSLibErrors.SUCCESS)
+            //{
+            //    return ret;
+            //}
+
+            //this.stream.PlaybackProgressChanged += this.Stream_PlaybackProgressChanged;
+            //this.stream.DownloadProgressChanged += this.Stream_DownloadProgressChanged;
 
             return ResponseCode.Success;
         }
 
-        public int Release()
+        private void StreamReader_DataAvailable(byte[] data)
         {
-            this.isInit = false;
+
+        }
+
+        private void StreamReader_DownloadProgressChanged(double obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void StreamReader_PositionChanged(double obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Close()
+        {
+            //if (this.stream != null)
+            //{
+            //    this.stream.PlaybackProgressChanged -= this.Stream_PlaybackProgressChanged;
+            //    this.stream.DownloadProgressChanged -= this.Stream_DownloadProgressChanged;
+            //    this.stream.Close();
+            //    this.stream = null;
+            //}
 
             Marshal.FreeHGlobal(this.pwfx_free);
             Marshal.Release(this.pdsb8);
@@ -156,49 +206,6 @@ namespace MiniMusicCore.AudioPlayer
             }
             this.notifyHwnd_close = null;
             this.rgdsbpn = null;
-
-            return ResponseCode.Success;
-        }
-
-        /// <summary>
-        /// 打开音频源
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public int Open()
-        {
-            //this.stream = IAudioStream.Create(source);
-            //if (this.stream == null)
-            //{
-            //    DSLibUtils.PrintLog("不支持的音频源:{0}", source);
-            //    return DSLibErrors.NOT_SUPPORTED;
-            //}
-
-            //int ret = this.stream.Open();
-            //if (ret != DSLibErrors.SUCCESS)
-            //{
-            //    return ret;
-            //}
-
-            //this.stream.PlaybackProgressChanged += this.Stream_PlaybackProgressChanged;
-            //this.stream.DownloadProgressChanged += this.Stream_DownloadProgressChanged;
-
-            return ResponseCode.Success;
-        }
-
-        /// <summary>
-        /// 关闭音频源
-        /// </summary>
-        /// <returns></returns>
-        public int Close()
-        {
-            //if (this.stream != null)
-            //{
-            //    this.stream.PlaybackProgressChanged -= this.Stream_PlaybackProgressChanged;
-            //    this.stream.DownloadProgressChanged -= this.Stream_DownloadProgressChanged;
-            //    this.stream.Close();
-            //    this.stream = null;
-            //}
 
             return ResponseCode.Success;
         }

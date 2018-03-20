@@ -11,7 +11,7 @@ namespace MiniMusicCore.StreamReader
     public struct StreamInfo
     {
         public string StreamType { get; set; }
-	
-	public long TotalSeconds { get; set; }
+
+        public long TotalSeconds { get; set; }
     }
 }
