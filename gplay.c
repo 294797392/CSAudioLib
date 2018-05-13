@@ -12,7 +12,6 @@ int gplay_new(gplay_t **gplay)
 
 int gplay_free(gplay_t *gplay)
 {
-    
 }
 
 int gplay_select_kernel(gplay_t *gplay, char *name)
