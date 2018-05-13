@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "dsound.h": "c",
+        "gplay.h": "c"
+    }
+}

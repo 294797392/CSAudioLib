@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "C:/Program Files (x86)/Microsoft Visual Studio 10.0/VC/include",
+                    "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include",
+                    "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Include"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "${workspaceFolder}",
+                "C:/Program Files (x86)/Microsoft Visual Studio 10.0/VC/include",
+                "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include",
+                "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "msvc-x64"
+        }
+    ],
+    "version": 4
+}
