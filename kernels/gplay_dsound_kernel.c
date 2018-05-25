@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dsound.h>
-#include "error.h"
+#include "gerror.h"
 #include "log.h"
 #include "gplay.h"
 #include "kernels/gplay_dsound_kernel.h"
@@ -115,12 +115,6 @@ end:
 	return ret;
 }
 int gplay_dsound_release(void *ctx) {}
-int gplay_dsound_set_params(void *ctx, gplay_params_t params)
-{
-	gplay_dsound_ctx_t *dsound = (gplay_dsound_ctx_t*)ctx;
-	memcpy(&dsound->params, &params, sizeof(gplay_params_t));
-	return ERR_OK;
-}
 
 int gplay_dsound_open(void *ctx, const char *uri)
 {
@@ -272,7 +266,6 @@ const static gplay_kernel_t gplay_dsound_kernel =
 	.name = "Windows DirectSound Kernel",
 	.init = gplay_dsound_init,
 	.release = gplay_dsound_release,
-	.set_params = gplay_dsound_set_params,
 	.play = gplay_dsound_play,
 	.stop = gplay_dsound_stop,
 	.pause = gplay_dsound_pause,

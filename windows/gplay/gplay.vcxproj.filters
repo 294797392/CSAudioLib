@@ -18,16 +18,25 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\error.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\gplay.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\log.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\kernels\gplay_dsound_kernel.h">
+    <ClInclude Include="..\..\kernels\kernels.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gerror.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gprocess.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\hal.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kernels\mplayer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +47,16 @@
     <ClCompile Include="..\..\log.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="main.c">
+    <ClCompile Include="..\..\gprocess.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\kernels\gplay_dsound_kernel.c">
+    <ClCompile Include="..\..\main.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\hal.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kernels\mplayer.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

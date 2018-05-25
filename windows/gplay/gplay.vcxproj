@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -77,6 +77,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)\build</OutDir>
+    <IncludePath>$(SolutionDir)\..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -152,16 +154,21 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\error.h" />
+    <ClInclude Include="..\..\gerror.h" />
     <ClInclude Include="..\..\gplay.h" />
-    <ClInclude Include="..\..\kernels\gplay_dsound_kernel.h" />
+    <ClInclude Include="..\..\gprocess.h" />
+    <ClInclude Include="..\..\hal.h" />
+    <ClInclude Include="..\..\kernels\mplayer.h" />
+    <ClInclude Include="..\..\kernels\kernels.h" />
     <ClInclude Include="..\..\log.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\gplay.c" />
-    <ClCompile Include="..\..\kernels\gplay_dsound_kernel.c" />
+    <ClCompile Include="..\..\gprocess.c" />
+    <ClCompile Include="..\..\hal.c" />
+    <ClCompile Include="..\..\kernels\mplayer.c" />
     <ClCompile Include="..\..\log.c" />
-    <ClCompile Include="main.c" />
+    <ClCompile Include="..\..\main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,11 +3,11 @@
 
 #include "gplay.h"
 
-const gplay_kernel_t gplay_kernel_mplayer;
+const gplay_ops_t gplay_mplayer_ops;
 
-const gplay_kernel_t *gplay_kernels[] = 
+static const gplay_ops_t *gplay_kernels[] =
 {
-    &gplay_kernel_mplayer
+    &gplay_mplayer_ops
 };
 
 #endif

@@ -3,45 +3,24 @@
 
 #define MAX_URI_LEN 1024
 
-typedef enum
-{
-    GPLAY_PARAMS_KEY_CHANNEL,
-    GPLAY_PARAMS_KEY_BITRATE,
-    GPLAY_PARAMS_KET_FORMATE
-};
-
-typedef enum 
-{
-    GPLAY_OPT_NONE,          /* 无选项 */
-    GPLAY_OPT_BUFFERED_PLAY, /* 缓冲播放 */
-} gplay_opt_t;
-
-typedef struct gplay_params
-{
-    int channel;        /* 通道数 */
-    int bitrate;        /* 比特率 */
-    int formate;        /* 文件格式 */
-    int sample_rate;    /* 采样率 */
-} gplay_params_t;
-
-typedef struct gplay_kernel
+typedef struct gplay_ops
 {
     const char *name;
     const char *desc;
-    int (*init)(void **ctx);
-    int (*release)(void *ctx);
-    int (*open)(void *ctx, const char *uri);
-    int (*close)(void *ctx);
-    int (*play)(void *ctx);
-    int (*stop)(void *ctx);
-    int (*pause)(void *ctx);
-    int (*resume)(void *ctx);
-} gplay_kernel_t;
+    int (*init)(void **kernel);
+	int(*release)(void *kernel);
+	int(*open)(void *kernel, const char *uri);
+	int(*close)(void *kernel);
+	int(*play)(void *kernel);
+	int(*stop)(void *kernel);
+	int(*pause)(void *kernel);
+	int(*resume)(void *kernel);
+} gplay_ops_t;
 
 typedef struct gplay
 {
     void *kernel_ctx;
-    gplay_kernel_t *kernel;
+	gplay_ops_t *kernel;
 } gplay_t;
 
 int gplay_main_loop(int argc, char *argv[]);
