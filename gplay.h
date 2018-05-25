@@ -3,6 +3,13 @@
 
 #define MAX_URI_LEN 1024
 
+typedef enum
+{
+	ENUM_PLAY_STATE_IDLE,
+	ENUM_PLAY_STATE_PLAING,
+	ENUM_PLAY_STATE_PAUSED
+};
+
 typedef struct gplay_ops
 {
     const char *name;

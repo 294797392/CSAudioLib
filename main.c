@@ -5,8 +5,16 @@
 
 #include "gprocess.h"
 
+void test(int *c)
+{
+	(*c) = 1;
+}
+
 int main(int argc, char *argv[])
 {
+	int c = 2;
+	test(&c);
+
 	gprocess_t *proc;
 	gprocess_open("F:\\gardenia-media\\windows\\build\\mplayer.exe", "-slave -quiet F:\\gardenia-media\\windows\\build\\test.mp3", &proc);
 
