@@ -4,7 +4,8 @@
             "name": "Win32",
             "browse": {
                 "path": [
-                    "${workspaceFolder}",
+					"${workspaceFolder}",
+					"${workspaceFolder}/gproc",
                     "C:/Program Files (x86)/Microsoft Visual Studio 10.0/VC/include",
                     "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include",
                     "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Include"
@@ -12,7 +13,8 @@
                 "limitSymbolsToIncludedHeaders": true
             },
             "includePath": [
-                "${workspaceFolder}",
+				"${workspaceFolder}",
+				"${workspaceFolder}/gproc",
                 "C:/Program Files (x86)/Microsoft Visual Studio 10.0/VC/include",
                 "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include",
                 "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Include"

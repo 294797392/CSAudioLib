@@ -1,6 +1,12 @@
 {
-    "files.associations": {
-        "dsound.h": "c",
-        "gplay.h": "c"
-    }
+	"files.associations": {
+		"*.bat": "bat",
+		"dsound.h": "c",
+		"gplay.h": "c",
+		"stdio.h": "c",
+		"stdlib.h": "c",
+		"gproc.h": "c",
+		"glog.h": "c",
+		"types.h": "c"
+	}
 }

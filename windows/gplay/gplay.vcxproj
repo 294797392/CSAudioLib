@@ -160,7 +160,7 @@
     <ClInclude Include="..\..\hal.h" />
     <ClInclude Include="..\..\kernels\mplayer.h" />
     <ClInclude Include="..\..\kernels\kernels.h" />
-    <ClInclude Include="..\..\log.h" />
+    <ClInclude Include="..\..\glog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\gplay.c" />

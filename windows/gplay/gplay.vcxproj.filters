@@ -21,7 +21,7 @@
     <ClInclude Include="..\..\gplay.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\log.h">
+    <ClInclude Include="..\..\glog.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\kernels\kernels.h">

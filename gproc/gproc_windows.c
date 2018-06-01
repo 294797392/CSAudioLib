@@ -3,16 +3,16 @@
 #include <windows.h>
 
 #include "hal.h"
-#include "gprocess.h"
+#include "gproc.h"
 #include "gerror.h"
 
-typedef struct gprocess 
+struct gproc
 {
     HANDLE in;
     HANDLE out;
-} gprocess_t;
+};
 
-int gprocess_open(const char *path, const char *args, gprocess_t **proc)
+int gproc_open(const char *path, char **args, gproc_t **proc)
 {
     int ret = ERR_OK;
     HANDLE g_hChildStd_IN_Rd = NULL;
@@ -52,11 +52,11 @@ int gprocess_open(const char *path, const char *args, gprocess_t **proc)
     }
 
     // Ensure the write handle to the pipe for STDIN is not inherited. 
-   if (!SetHandleInformation(g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0))
-   {
-        ret = ERR_GPROC_PIPE_HANDLE_ERROR;
-        goto end;
-   }
+   	if (!SetHandleInformation(g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0))
+   	{
+		ret = ERR_GPROC_PIPE_HANDLE_ERROR;
+		goto end;
+   	}
 
     // Set up members of the PROCESS_INFORMATION structure. 
     memset(&piProcInfo, 0, sizeof(PROCESS_INFORMATION));
@@ -90,8 +90,8 @@ int gprocess_open(const char *path, const char *args, gprocess_t **proc)
         goto end;
     }
 
-    (*proc) = (gprocess_t*)malloc(sizeof(gprocess_t));
-    memset((*proc), 0, sizeof(gprocess_t));
+    (*proc) = (gproc_t*)malloc(sizeof(gproc_t));
+    memset((*proc), 0, sizeof(gproc_t));
     (*proc)->in = g_hChildStd_IN_Wr;
     (*proc)->out = g_hChildStd_OUT_Rd;
 
@@ -101,7 +101,7 @@ end:
     return ret;
 }
 
-int gprocess_write(gprocess_t *proc, const char *data, int len)
+int gproc_write(gproc_t *proc, const char *data, int len)
 {
     int ret = ERR_OK;
 	DWORD dwWritten;
@@ -115,7 +115,7 @@ end:
     return ret;
 }
 
-int gprocess_read(gprocess_t *proc, char *data, int size, int *read)
+int gproc_read(gproc_t *proc, char *data, int size, int *read)
 {
     int ret = ERR_OK;
 	if (ReadFile(proc->out, data, size, read, NULL) == FALSE)
@@ -128,7 +128,7 @@ end:
     return ret;
 }
 
-int gprocess_close(gprocess_t *proc)
+int gproc_close(gproc_t *proc)
 {
     int ret = ERR_OK;
 

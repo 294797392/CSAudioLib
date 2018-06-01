@@ -3,7 +3,7 @@
 #include <string.h>
 #include <dsound.h>
 #include "gerror.h"
-#include "log.h"
+#include "glog.h"
 #include "gplay.h"
 #include "kernels/gplay_dsound_kernel.h"
 
@@ -18,7 +18,7 @@
 //*/
 //if ((hret = dsound->lpDirectSoundBuffer8->lpVtbl->GetCurrentPosition(dsound->lpDirectSoundBuffer8, &playCursor, &writeCursor)) != DS_OK)
 //{
-//	gmedia_log_error("GetCurrentPosition failed, hret=%lld", hret);
+//	glog_error("GetCurrentPosition failed, hret=%lld", hret);
 //	continue;
 //}
 
@@ -57,7 +57,7 @@ DWORD WINAPI gplay_play_thread(LPVOID lpParam)
 						dsound->lpDirectSoundBuffer8->lpVtbl->Restore(dsound->lpDirectSoundBuffer8);
 						if ((hret = dsound->lpDirectSoundBuffer8->lpVtbl->Lock(dsound->lpDirectSoundBuffer8, writeCursor, size, &dataPtr1, &dataLength1, &dataPtr2, &dataLength2, NULL)) != DS_OK)
 						{
-							gmedia_log_error("GetCurrentPosition failed, hret=%lld", hret);
+							glog_error("GetCurrentPosition failed, hret=%lld", hret);
 							continue;
 						}
 					}
@@ -96,14 +96,14 @@ int gplay_dsound_init(void *ctx)
 
 	if ((hret = DirectSoundCreate8(NULL, &lpDirectSound8, NULL)) != DS_OK)
 	{
-		gmedia_log_error("DirectSoundCreate8 failed, hret=%lld\n", hret);
+		glog_error("DirectSoundCreate8 failed, hret=%lld\n", hret);
 		ret = ERR_DSOUND_ERR;
 		goto end;
 	}
 
 	if ((hret = lpDirectSound8->lpVtbl->SetCooperativeLevel(lpDirectSound8, hwnd, DSSCL_NORMAL)) != DS_OK)
 	{
-		gmedia_log_error("SetCooperativeLevel failed, hret=%lld\n", hret);
+		glog_error("SetCooperativeLevel failed, hret=%lld\n", hret);
 		ret = ERR_DSOUND_ERR;
 		goto end;
 	}
@@ -177,7 +177,7 @@ int gplay_dsound_open(void *ctx, const char *uri)
 	bufdesc.dwReserved = 0; /* 保留字段 */
 	if ((hret = dsound->lpDirectSound8->lpVtbl->CreateSoundBuffer(dsound->lpDirectSound8, &bufdesc, &lpDirectSoundBuffer, NULL)) != DS_OK)
 	{
-		gmedia_log_error("CreateSoundBuffer failed, hret=%lld", hret);
+		glog_error("CreateSoundBuffer failed, hret=%lld", hret);
 		ret = ERR_DSOUND_ERR;
 		goto end;
 	}
@@ -187,13 +187,13 @@ int gplay_dsound_open(void *ctx, const char *uri)
 	/* 设置播放缓冲区回调 */
 	if ((hret = lpDirectSoundBuffer8->lpVtbl->GetFormat(lpDirectSoundBuffer8, &fmt, sizeof(WAVEFORMATEX), NULL)) != DS_OK)
 	{
-		gmedia_log_error("GetFormat failed, hret=%lld", hret);
+		glog_error("GetFormat failed, hret=%lld", hret);
 		ret = ERR_DSOUND_ERR;
 		goto end;
 	}
 	if ((hret = lpDirectSoundBuffer8->lpVtbl->QueryInterface(lpDirectSoundBuffer8, &IID_IDirectSoundNotify8, (LPVOID *)&lpDirectSoundNotify8)) != DS_OK)
 	{
-		gmedia_log_error("obtain IID_IDirectSoundNotify8 failed, hret=%lld", hret);
+		glog_error("obtain IID_IDirectSoundNotify8 failed, hret=%lld", hret);
 		ret = ERR_DSOUND_ERR;
 		goto end;
 	}
@@ -201,7 +201,7 @@ int gplay_dsound_open(void *ctx, const char *uri)
 	{
 		if (!(play_callback_evt[idx] = CreateEvent(NULL, 1, 0, NULL)))
 		{
-			gmedia_log_error("create notify evt failed, hret=%lld", hret);
+			glog_error("create notify evt failed, hret=%lld", hret);
 			ret = ERR_DSOUND_ERR;
 			goto end;
 		}
@@ -210,7 +210,7 @@ int gplay_dsound_open(void *ctx, const char *uri)
 	}
 	if ((hret = lpDirectSoundNotify8->lpVtbl->SetNotificationPositions(lpDirectSoundNotify8, MAX_NOTIFY_POSITIONS, dsBufferPosNotify)) != DS_OK)
 	{
-		gmedia_log_error("SetNotificationPositions failed, hret=%lld", hret);
+		glog_error("SetNotificationPositions failed, hret=%lld", hret);
 		ret = ERR_DSOUND_ERR;
 		goto end;
 	}
@@ -218,7 +218,7 @@ int gplay_dsound_open(void *ctx, const char *uri)
 	/* 打开文件 */
 	if (!(stream = fopen(uri, "rb+")))
 	{
-		gmedia_log_error("open %s failed", uri);
+		glog_error("open %s failed", uri);
 		ret = ERR_OPEN_FILE_ERR;
 		goto end;
 	}
@@ -246,7 +246,7 @@ int gplay_dsound_play(void *ctx)
 
 	if (!(play_thread_handle = CreateThread(NULL, 0, gplay_play_thread, ctx, 0, &dsound->play_thread_id)))
 	{
-		gmedia_log_error("create play thread failed");
+		glog_error("create play thread failed");
 		ret = ERR_CREATE_THREAD_ERR;
 		goto end;
 	}
