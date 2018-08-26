@@ -50,7 +50,9 @@
     <Compile Include="AudioSource\AudioSourceEnum.cs" />
     <Compile Include="AudioSource\GenericAudioSource.cs" />
     <Compile Include="AudioSource\IAudioSource.cs" />
+    <Compile Include="AudioStream\IAudioStream.cs" />
     <Compile Include="DefaultValues.cs" />
+    <Compile Include="GMusicContext.cs" />
     <Compile Include="libgmusic\mplayer.cs" />
     <Compile Include="PlayerDrivers\IPlayerDriver.cs" />
     <Compile Include="PlayerDrivers\MPlayerDriver.cs" />
