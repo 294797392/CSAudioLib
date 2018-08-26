@@ -50,6 +50,12 @@ typedef int BOOL;
 #define MP_SEND_COMMAND_FAILED 2
 #define MP_READ_DATA_FAILED 3
 
+/* mplayer参数 */
+typedef struct tagMPOPT
+{
+	char mplayer_path[1024];
+}mplayer_opt_t;
+
 /* 播放器事件类型定义 */
 typedef enum tagMPEVENT
 {
@@ -87,8 +93,9 @@ typedef struct tagMPLAYER_OPS mplayer_ops_t;
 struct tagMPLAYER{
 	char source[DEFAULT_SOURCE_SIZE];
 	int volume;
-	mplayer_status_enum status;
+	mplayer_opt_t *opt;
 	mplayer_listener_t *listener;
+	mplayer_status_enum status;
 	pthread_t monitor_thread;
 	mplayer_priv_t *priv;
 	mplayer_ops_t *ops;
@@ -120,7 +127,7 @@ struct tagMPLAYER_OPS
 	int(*mpops_read_data)(mplayer_t *mp, char *buff, int size);
 };
 
-API_EXPORT mplayer_t* mplayer_create_instance();
+API_EXPORT mplayer_t* mplayer_create_instance(mplayer_opt_t opt);
 API_EXPORT void mplayer_free_instance(mplayer_t *mp);
 API_EXPORT void mplayer_open(mplayer_t *mp, const char *source, int source_size);
 API_EXPORT void mplayer_close(mplayer_t *mp);

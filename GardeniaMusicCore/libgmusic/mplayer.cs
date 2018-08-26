@@ -18,10 +18,18 @@ namespace libgmusic
         MPSTAT_STOPPED
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public struct mplayer_listener
     {
         public Func<mplayer_event_enum, IntPtr, IntPtr> mp_event_handler;
         public IntPtr userdata;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct mplayer_opt
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
+        public string mplayer_path;
     }
 
     /// <summary>
@@ -38,13 +46,13 @@ namespace libgmusic
         private const string LIBGMUSIC_DLL_NAME = "libgmusic.dll";
 
         [DllImport(LIBGMUSIC_DLL_NAME, CallingConvention = CallingConvention.Cdecl, EntryPoint = "mplayer_create_instance")]
-        public static extern IntPtr mplayer_create_instance();
+        public static extern IntPtr mplayer_create_instance(mplayer_opt opt);
 
         [DllImport(LIBGMUSIC_DLL_NAME, CallingConvention = CallingConvention.Cdecl, EntryPoint = "mplayer_free_instance")]
         public static extern void mplayer_free_instance(IntPtr mphandle);
 
         [DllImport(LIBGMUSIC_DLL_NAME, CallingConvention = CallingConvention.Cdecl, EntryPoint = "mplayer_open")]
-        public static extern void mplayer_open(IntPtr mphandle, IntPtr source, int size);
+        public static extern void mplayer_open(IntPtr mphandle, string source, int size);
 
         [DllImport(LIBGMUSIC_DLL_NAME, CallingConvention = CallingConvention.Cdecl, EntryPoint = "mplayer_close")]
         public static extern void mplayer_close(IntPtr mphandle);

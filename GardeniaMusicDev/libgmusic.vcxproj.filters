@@ -4,6 +4,9 @@
     <Filter Include="mplayer">
       <UniqueIdentifier>{46766541-40cd-4fd1-907c-d18d508aefea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mp3decode">
+      <UniqueIdentifier>{524d7e4d-bb0e-4fb4-803b-1ed26d9ec3be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mplayer.c">

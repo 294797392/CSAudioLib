@@ -71,6 +71,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)\GardeniaMusicDev;$(SolutionDir)\Dependencies\pthread\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\Dependencies\pthread\lib\x86;$(LibraryPath)</LibraryPath>
+    <OutDir>..\build</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace GMusicCore
+{
+    public static class DefaultValues
+    {
+        public static readonly string MPlayerExePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mplayer.exe");
+        public const int ProgressTimerInterval = 1000;
+    }
+}

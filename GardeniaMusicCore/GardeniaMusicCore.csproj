@@ -16,11 +16,12 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,10 +50,13 @@
     <Compile Include="AudioSource\AudioSourceEnum.cs" />
     <Compile Include="AudioSource\GenericAudioSource.cs" />
     <Compile Include="AudioSource\IAudioSource.cs" />
+    <Compile Include="DefaultValues.cs" />
     <Compile Include="libgmusic\mplayer.cs" />
     <Compile Include="PlayerDrivers\IPlayerDriver.cs" />
     <Compile Include="PlayerDrivers\MPlayerDriver.cs" />
     <Compile Include="PlayerDrivers\MPlayerNativeDriver.cs" />
+    <Compile Include="PlayerDrivers\PlayerDriverEventType.cs" />
+    <Compile Include="PlayerDrivers\PlayerDriverStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseCode.cs" />
     <Compile Include="Utils.cs" />

@@ -65,9 +65,9 @@ int mpops_open_player_process(mplayer_t *mp)
 	siStartInfo.hStdInput = pipe2[0];
 	siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 	char command[512] = { '\0' };
-	snprintf(command, sizeof(command), "-quiet -slave %s", mp->source);
+	snprintf(command, sizeof(command), "-quiet -slave -nolirc -idle");
 	PROCESS_INFORMATION piProcInfo = { 0 };
-	if (!CreateProcess(MPLAYER_PATH,
+	if (!CreateProcess(mp->opt->mplayer_path,
 		command,		            // command line
 		NULL,               // process security attributes 
 		NULL,               // primary thread security attributes 
@@ -104,7 +104,7 @@ int mpops_wait_process_exit(mplayer_t *mp)
 
 int mpops_process_is_exit(mplayer_t *mp)
 {
-	return mp->priv->pinfo.hProcess == NULL;
+	return mp->priv->pinfo.hProcess == NULL;//|| mp->ops->mpops_send_command(mp, "1", 1) != MP_SUCCESS;
 }
 
 void mpops_close_player_process(mplayer_t *mp)
@@ -167,7 +167,7 @@ struct tagMPLAYER_PRIV {
 int mpops_open_player_process(mplayer_t *mp)
 {
 	int pipe1[2], pipe2[2];
-	if(pipe(pipe1) < 0 || pipe(pipe2) < 0)
+	if (pipe(pipe1) < 0 || pipe(pipe2) < 0)
 	{
 		fprintf(stdout, "create pipe failed, errno:%d\n", errno);
 		return MP_CREATE_PROCESS_FAILED;
@@ -182,21 +182,21 @@ int mpops_open_player_process(mplayer_t *mp)
 		close(pipe2[0]);
 		mp->priv->pid = pid;
 	}
-	else if(pid == 0)
+	else if (pid == 0)
 	{
 		/* mplayer process */
 		close(pipe1[0]);
 		close(pipe2[1]);
 		dup2(pipe1[1], STDOUT_FILENO);
 		dup2(pipe2[0], STDIN_FILENO);
-		char *argv[5] = { MPLAYER_PATH, "-slave", "-quiet", mp->source, NULL };
-		if(execvp(MPLAYER_PATH, argv) == -1)
+		char *argv[7] = { MPLAYER_PATH, "-slave", "-quiet", "-nolirc", "-idle", NULL };
+		if (execvp(MPLAYER_PATH, argv) == -1)
 		{
 			fprintf(stdout, "load mplayer image failed, errno:%d\n", errno);
 			return MP_CREATE_PROCESS_FAILED;
 		}
 	}
-	else if(pid == -1)
+	else if (pid == -1)
 	{
 		fprintf(stdout, "fork mplayer process failed, errno:%d\n", errno);
 		return MP_CREATE_PROCESS_FAILED;
@@ -214,9 +214,9 @@ int mpops_process_is_exit(mplayer_t *mp)
 int mpops_wait_process_exit(mplayer_t *mp)
 {
 	int exit_status;
-	if(waitpid(mp->priv->pid, &exit_status, 0) < 0)
+	if (waitpid(mp->priv->pid, &exit_status, 0) < 0)
 	{
-		if(errno == EINTR)
+		if (errno == EINTR)
 		{
 			fprintf(stdout, "receive EINTR signal\n");
 		}
@@ -231,7 +231,7 @@ int mpops_wait_process_exit(mplayer_t *mp)
 /* 关闭进程 */
 void mpops_close_player_process(mplayer_t *mp)
 {
-	if(kill(mp->priv->pid, SIGKILL) == -1)
+	if (kill(mp->priv->pid, SIGKILL) == -1)
 	{
 		fprintf(stdout, "kill mplayer process failed, errno:%d\n", errno);
 	}
@@ -254,7 +254,7 @@ int mpops_send_command(mplayer_t *mp, const char *cmd, int size)
 	strncpy(command, cmd, sizeof(command));
 	strncat(command, "\n", 1);
 
-	if(write(mp->priv->fd_write, command, strlen(command)) == -1)
+	if (write(mp->priv->fd_write, command, strlen(command)) == -1)
 	{
 		fprintf(stdout, "send %s error, errno:%d\n", cmd, errno);
 		return MP_SEND_COMMAND_FAILED;
@@ -268,7 +268,7 @@ int mpops_send_command(mplayer_t *mp, const char *cmd, int size)
 /* 从mplayer进程读取数据 */
 int mpops_read_data(mplayer_t *mp, char *buff, int size)
 {
-	if(read(mp->priv->fd_read, buff, (size_t)size) < 0)
+	if (read(mp->priv->fd_read, buff, (size_t)size) < 0)
 	{
 		fprintf(stdout, "read data error, errno:%d\n", errno);
 		return MP_READ_DATA_FAILED;
@@ -315,9 +315,9 @@ static BOOL parse_key_value_pair(const char *kvpair, char splitter, char *key, i
 void* mplayer_monitor_thread_process(void* userdata)
 {
 	mplayer_t *mp = (mplayer_t*)userdata;
-	fprintf(stdout, "wait mplayer process stopped..\n");
+	fprintf(stdout, "wait mplayer process exit..\n");
 	mp->ops->mpops_wait_process_exit(mp);
-	fprintf(stdout, "mplayer process stopped\n");
+	fprintf(stdout, "mplayer process exit\n");
 	mp->ops->mpops_release_process_resource(mp);
 	mp->status = MPSTAT_STOPPED;
 	if (mp->listener && mp->listener->handler)
@@ -375,7 +375,9 @@ void mplayer_retrive_media_info(mplayer_t *mp, const char *retrive_cmd, const ch
 	parse_key_value_pair(result, '=', key, sizeof(key), value_buf, buf_size);
 }
 
-mplayer_t* mplayer_create_instance()
+
+
+mplayer_t* mplayer_create_instance(mplayer_opt_t opt)
 {
 	mplayer_t *instance = (mplayer_t*)malloc(sizeof(mplayer_t));
 	memset(instance, 0, sizeof(mplayer_t));
@@ -383,9 +385,25 @@ mplayer_t* mplayer_create_instance()
 	instance->volume = VOLUME_DEFAULT;
 	instance->status = MPSTAT_STOPPED;
 
+	mplayer_opt_t *mpopt = (mplayer_opt_t*)malloc(sizeof(mplayer_opt_t));
+	memcpy(mpopt, &opt, sizeof(mplayer_opt_t));
+	if (strlen(mpopt->mplayer_path) == 0)
+	{
+		strncpy(mpopt->mplayer_path, MPLAYER_PATH, sizeof(mpopt->mplayer_path));
+	}
+	instance->opt = mpopt;
+
 	mplayer_priv_t *priv = (mplayer_priv_t*)malloc(sizeof(mplayer_priv_t));
 	memset(priv, 0, sizeof(mplayer_priv_t));
 	instance->priv = priv;
+
+	int ret = instance->ops->mpops_open_player_process(instance);
+	if (ret != MP_SUCCESS)
+	{
+		return ret;
+	}
+
+	pthread_create(&instance->monitor_thread, NULL, mplayer_monitor_thread_process, instance);
 
 	return instance;
 }
@@ -409,29 +427,26 @@ void mplayer_close(mplayer_t *mp)
 
 int mplayer_play(mplayer_t *mp)
 {
-	if (!mp->ops->mpops_process_is_exit(mp))
+	char cmd[1024] = { '\0' };
+	snprintf(cmd, sizeof(cmd), "loadfile %s", mp->source);
+	int ret = MP_SUCCESS;
+	if ((ret = mp->ops->mpops_send_command(mp, cmd, strlen(cmd))) == MP_SUCCESS)
 	{
-		char cmd[1024] = { '\0' };
-		snprintf(cmd, sizeof(cmd), "loadfile %s", mp->source);
-		return mp->ops->mpops_send_command(mp, cmd, strlen(cmd));
+		mp->status = MPSTAT_PLAYING;
 	}
-
-	int ret = mp->ops->mpops_open_player_process(mp);
-	if (ret != MP_SUCCESS)
-	{
-		return ret;
-	}
-
-	pthread_create(&mp->monitor_thread, NULL, mplayer_monitor_thread_process, mp);
-	mp->status = MPSTAT_PLAYING;
-	return MP_SUCCESS;
+	return ret;
 }
 
 void mplayer_stop(mplayer_t *mp)
 {
-	mp->ops->mpops_close_player_process(mp);
-	mp->ops->mpops_release_process_resource(mp);
-	mp->status = MPSTAT_STOPPED;
+	const char *pause_cmd = "stop";
+	int ret = mp->ops->mpops_send_command(mp, pause_cmd, strlen(pause_cmd));
+	if (ret == MP_SUCCESS)
+	{
+		mp->status = MPSTAT_STOPPED;
+	}
+	return ret;
+
 }
 
 int mplayer_pause(mplayer_t *mp)
