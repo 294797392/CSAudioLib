@@ -1,0 +1,82 @@
+﻿using GMusicCore;
+using MiniMusicCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace GMusicStream
+{
+    public class GMusicFileStream : IGMusicStream
+    {
+        private static log4net.ILog logger = log4net.LogManager.GetLogger("GMusicFileStream");
+
+        private FileStream stream;
+
+        public GMusicFileStream(MusicSource source) : base(source)
+        {
+        }
+
+        public override GMusicStreamType StreamType
+        {
+            get
+            {
+                return GMusicStreamType.File;
+            }
+        }
+
+        public override long TotalLength
+        {
+            get
+            {
+                return this.stream.Length;
+            }
+        }
+
+        public override string Name
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override bool IsProtocolSupported(string protocol)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int Open()
+        {
+            string filePath = base.MusicSource.Uri;
+            if (!File.Exists(filePath))
+            {
+                logger.ErrorFormat("文件不存在:{0}", filePath);
+                return ResponseCode.FILE_NOT_FOUND;
+            }
+
+            this.stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+            return ResponseCode.SUCCESS;
+        }
+
+        public override bool Read()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Close()
+        {
+            if (this.stream != null)
+            {
+                try
+                {
+
+                    this.stream.Close();
+                }
+                catch (Exception e)
+                { }
+            }
+        }
+    }
+}

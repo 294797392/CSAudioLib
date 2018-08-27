@@ -10,5 +10,9 @@ namespace GMusicCore
     {
         public static readonly string MPlayerExePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mplayer.exe");
         public const int ProgressTimerInterval = 1000;
+
+        public const string GMusicFileStreamName = "GMUSIC_FILE_STREAM";
+
+        public static int GMusicStreamMaximumReadSize = 64 * 1024;
     }
 }

@@ -1,5 +1,4 @@
-﻿using GMusicCore.AudioSource;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +20,7 @@ namespace GMusicCore.PlayerDrivers
 
         void Release();
 
-        int Play(IAudioSource source);
+        int Play();
 
         void Stop();
 

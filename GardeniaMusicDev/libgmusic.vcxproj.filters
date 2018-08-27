@@ -7,15 +7,28 @@
     <Filter Include="mp3decode">
       <UniqueIdentifier>{524d7e4d-bb0e-4fb4-803b-1ed26d9ec3be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libgmstream">
+      <UniqueIdentifier>{afbf9cc2-7879-48de-bae9-990a781597e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mplayer.c">
       <Filter>mplayer</Filter>
     </ClCompile>
+    <ClCompile Include="libgmstream\stream.c">
+      <Filter>libgmstream</Filter>
+    </ClCompile>
+    <ClCompile Include="libgmstream\stream_file.c">
+      <Filter>libgmstream</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mplayer.h">
       <Filter>mplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="libgmstream\stream.h">
+      <Filter>libgmstream</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
