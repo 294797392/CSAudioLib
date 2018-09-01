@@ -37,6 +37,15 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
       <HintPath>..\Dependencies\log4net.dll</HintPath>
@@ -94,6 +103,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -108,6 +118,14 @@
     <ProjectReference Include="..\GardeniaMusicCore\GardeniaMusicCore.csproj">
       <Project>{1f787331-23cc-4464-831d-e43005f35932}</Project>
       <Name>GardeniaMusicCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GardeniaMusicDemuxer\GardeniaMusicDemuxer.csproj">
+      <Project>{ce106031-19b1-49b4-943f-e8c7c5ecb2bf}</Project>
+      <Name>GardeniaMusicDemuxer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GardeniaMusicStream\GardeniaMusicStream.csproj">
+      <Project>{b7ef98a1-68b7-4c9d-93d0-06b5a228cac8}</Project>
+      <Name>GardeniaMusicStream</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

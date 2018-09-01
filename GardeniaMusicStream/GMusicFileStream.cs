@@ -42,6 +42,14 @@ namespace GMusicStream
             }
         }
 
+        public override bool EOF
+        {
+            get
+            {
+                return this.stream.Position == this.stream.Length;
+            }
+        }
+
         public override bool IsProtocolSupported(string protocol)
         {
             throw new NotImplementedException();
@@ -60,9 +68,28 @@ namespace GMusicStream
             return ResponseCode.SUCCESS;
         }
 
-        public override bool Read()
+        public override int Read(byte[] buff, int size)
         {
-            throw new NotImplementedException();
+            return this.stream.Read(buff, 0, size);
+        }
+
+        public override bool ReadByte(out byte data)
+        {
+            data = 0;
+            int len = this.stream.ReadByte();
+            if (len == -1)
+            {
+                return false;
+            }
+
+            data = (byte)len;
+
+            return true;
+        }
+
+        public override void Skip(int size)
+        {
+            this.stream.Position += size;
         }
 
         public override void Close()

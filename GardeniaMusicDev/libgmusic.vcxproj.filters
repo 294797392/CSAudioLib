@@ -1,34 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="mplayer">
-      <UniqueIdentifier>{46766541-40cd-4fd1-907c-d18d508aefea}</UniqueIdentifier>
+    <Filter Include="demuxer">
+      <UniqueIdentifier>{9058bcb1-6a75-418d-b46f-3a43b751314d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mp3decode">
-      <UniqueIdentifier>{524d7e4d-bb0e-4fb4-803b-1ed26d9ec3be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libgmstream">
+    <Filter Include="stream">
       <UniqueIdentifier>{afbf9cc2-7879-48de-bae9-990a781597e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mplayer.c">
-      <Filter>mplayer</Filter>
-    </ClCompile>
     <ClCompile Include="libgmstream\stream.c">
-      <Filter>libgmstream</Filter>
+      <Filter>stream</Filter>
     </ClCompile>
     <ClCompile Include="libgmstream\stream_file.c">
-      <Filter>libgmstream</Filter>
+      <Filter>stream</Filter>
     </ClCompile>
     <ClCompile Include="main.c" />
+    <ClCompile Include="demuxer\demuxer_ffmpeg.c">
+      <Filter>demuxer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mplayer.h">
-      <Filter>mplayer</Filter>
-    </ClInclude>
     <ClInclude Include="libgmstream\stream.h">
-      <Filter>libgmstream</Filter>
+      <Filter>stream</Filter>
     </ClInclude>
+    <ClInclude Include="commondef.h" />
   </ItemGroup>
 </Project>

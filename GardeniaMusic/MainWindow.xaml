@@ -9,7 +9,7 @@
     <Grid>
         <TabControl>
             <TabItem Header="录音机">
-                
+                <TextBlock x:Name="ss"/>
             </TabItem>
             <TabItem Header="播放器">
                 

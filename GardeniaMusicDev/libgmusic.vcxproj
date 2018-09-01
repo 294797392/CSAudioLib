@@ -25,7 +25,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -69,9 +69,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)\GardeniaMusicDev;$(SolutionDir)\Dependencies\pthread\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\Dependencies\pthread\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\GardeniaMusicDev;$(SolutionDir)\Dependencies\pthread\include;$(SolutionDir)\Dependencies\ffmpeg\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\Dependencies\pthread\lib\x86;$(SolutionDir)\Dependencies\ffmpeg\lib;$(LibraryPath)</LibraryPath>
     <OutDir>..\build</OutDir>
+    <ReferencePath>$(SolutionDir)\Dependencies\ffmpeg\lib;$(ReferencePath)</ReferencePath>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,6 +83,12 @@
       <PreprocessorDefinitions>WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Dependencies\ffmpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <EnableUAC>false</EnableUAC>
+      <UACUIAccess>true</UACUIAccess>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -116,14 +124,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="demuxer\demuxer_ffmpeg.c" />
     <ClCompile Include="libgmstream\stream.c" />
     <ClCompile Include="libgmstream\stream_file.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="mplayer.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="commondef.h" />
     <ClInclude Include="libgmstream\stream.h" />
-    <ClInclude Include="mplayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

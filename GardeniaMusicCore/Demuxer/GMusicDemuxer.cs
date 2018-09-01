@@ -12,14 +12,6 @@ namespace GMusicCore
     {
         public abstract string Name { get; }
 
-        /// <summary>
-        /// 检测是否可以解封装
-        /// 返回True：可以
-        /// 返回False：不可以
-        /// </summary>
-        /// <returns></returns>
-        public abstract bool Check();
-
         public abstract int Open(IGMusicStream stream);
 
         public abstract void Close();

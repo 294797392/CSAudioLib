@@ -17,11 +17,6 @@ namespace GMusicDemuxer
             }
         }
 
-        public override bool Check()
-        {
-            throw new NotImplementedException();
-        }
-
         public override void Close()
         {
             throw new NotImplementedException();

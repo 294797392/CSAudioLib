@@ -47,10 +47,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Demuxer\DemuxerRegistry.cs" />
     <Compile Include="Demuxer\GMusicDemuxer.cs" />
     <Compile Include="Demuxer\GMusicDemuxerLookup.cs" />
     <Compile Include="Demuxer\GMusicDemuxerNames.cs" />
     <Compile Include="GMusicFormats.cs" />
+    <Compile Include="libgmusic\demux_ffmpeg.cs" />
     <Compile Include="Stream\GMusicStreamType.cs" />
     <Compile Include="MusicSource.cs" />
     <Compile Include="Stream\GMusicStreamLookup.cs" />
