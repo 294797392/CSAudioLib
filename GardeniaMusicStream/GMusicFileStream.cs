@@ -89,7 +89,7 @@ namespace GMusicStream
 
         public override void Skip(int size)
         {
-            this.stream.Position += size;
+            this.stream.Seek(size, SeekOrigin.Current);
         }
 
         public override void Close()

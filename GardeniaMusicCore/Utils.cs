@@ -42,5 +42,11 @@ namespace MiniMusicCore
 
             return structPtr;
         }
+
+        public static bool GetBit(uint source, int index)
+        {
+            uint mask = (uint)(1 << index);
+            return (source & mask) > 0;
+        }
     }
 }
