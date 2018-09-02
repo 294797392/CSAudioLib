@@ -19,6 +19,7 @@
     <ClCompile Include="demuxer\demuxer_ffmpeg.c">
       <Filter>demuxer</Filter>
     </ClCompile>
+    <ClCompile Include="helper.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libgmstream\stream.h">

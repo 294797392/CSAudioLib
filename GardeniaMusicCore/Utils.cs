@@ -43,10 +43,15 @@ namespace MiniMusicCore
             return structPtr;
         }
 
+        /// <summary>
+        /// 获取source里第index位的值
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public static bool GetBit(uint source, int index)
         {
-            uint mask = (uint)(1 << index);
-            return (source & mask) > 0;
+            return (source & ((uint)1 << index)) > 0;
         }
     }
 }

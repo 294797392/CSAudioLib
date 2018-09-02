@@ -52,7 +52,9 @@
     <Compile Include="Demuxer\GMusicDemuxerLookup.cs" />
     <Compile Include="Demuxer\GMusicDemuxerNames.cs" />
     <Compile Include="GMusicFormats.cs" />
+    <Compile Include="GMusicPlayer.cs" />
     <Compile Include="libgmusic\demux_ffmpeg.cs" />
+    <Compile Include="libgmusic\helper.cs" />
     <Compile Include="Stream\GMusicStreamType.cs" />
     <Compile Include="MusicSource.cs" />
     <Compile Include="Stream\GMusicStreamLookup.cs" />

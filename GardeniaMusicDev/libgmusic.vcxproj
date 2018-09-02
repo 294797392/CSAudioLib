@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="demuxer\demuxer_ffmpeg.c" />
+    <ClCompile Include="helper.c" />
     <ClCompile Include="libgmstream\stream.c" />
     <ClCompile Include="libgmstream\stream_file.c" />
     <ClCompile Include="main.c" />

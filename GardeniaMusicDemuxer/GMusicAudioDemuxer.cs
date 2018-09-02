@@ -1,12 +1,8 @@
 ﻿using GMusicCore;
 using GMusicCore.Demuxer;
-using ICare.Utility.Misc;
 using MiniMusicCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace GMusicDemuxer
 {
@@ -170,13 +166,13 @@ namespace GMusicDemuxer
             Layers layer = Layers.Reserve;
             MPEGVersion mpeg_ver = MPEGVersion.Reserve;
             int sampling_frequency = 0;
-            int bit_rate = 0;
+            int bit_rate_kbps = 0;
             int channels = 0;
             long frame_size = 0;
             int spf = 0; // sample per frame, 每一个音频帧中，采样的个数，是一个恒定值
             uint padding = 0; // 填充
 
-            #region 检测MP3第一帧头部同步信息（sync）
+            #region 检测MP3第一帧头部同步信息（sync）,如果是同步信息，那么就说明是编码帧的帧头
 
             /*
              * MP3编码的每一帧的帧头的有个固定的11位的同步信息，从高位开始计算，每一位都是1
@@ -185,10 +181,12 @@ namespace GMusicDemuxer
              */
 
             byte[] frame_head = new byte[4];
-            while (!stream.EOF)
+            while (true)
             {
-                stream.Read(frame_head, 4);
-                int32_frame_head = BitConverter.ToUInt32(frame_head, 0);
+                byte cur_byte;
+                stream.ReadByte(out cur_byte);
+                AppendByte(frame_head, cur_byte); /* 每次读取一个字节，并且追加到frame_head里 */
+                int32_frame_head = (uint)(frame_head[0] << 24 | frame_head[1] << 16 | frame_head[2] << 8 | frame_head[3]);
                 if ((int32_frame_head & 0xFFE00000) == 0xFFE00000)
                 {
                     sync_detected = true;
@@ -218,22 +216,22 @@ namespace GMusicDemuxer
               |-----------------|
              */
 
+            bool bit18 = Utils.GetBit(int32_frame_head, 18);
             bool bit17 = Utils.GetBit(int32_frame_head, 17);
-            bool bit16 = Utils.GetBit(int32_frame_head, 16);
-            if (!bit16 && !bit17)
+            if (!bit18 && !bit17)
             {
                 logger.ErrorFormat("not layer-1/2/3");
                 return false;
             }
-            else if (!bit16 && bit17)
+            else if (!bit18 && bit17)
             {
                 layer = Layers.LayerIII;
             }
-            else if (bit16 && !bit17)
+            else if (bit18 && !bit17)
             {
                 layer = Layers.LayerII;
             }
-            else if (bit16 && bit17)
+            else if (bit18 && bit17)
             {
                 layer = Layers.LayerI;
             }
@@ -363,8 +361,8 @@ namespace GMusicDemuxer
             bool bit12 = Utils.GetBit(int32_frame_head, 12);
 
             int[] bit_rate_array = BitRateMap[mpeg_ver][(int)layer];
-            uint bit_rate_index = (int32_frame_head >> 12) & 0xF;  // from mplayer
-            bit_rate = bit_rate_array[bit_rate_index];
+            uint bit_rate_index = (int32_frame_head >> 12) & 0xF;
+            bit_rate_kbps = bit_rate_array[bit_rate_index];
 
             #endregion
 
@@ -372,7 +370,7 @@ namespace GMusicDemuxer
 
             bool bit7 = Utils.GetBit(int32_frame_head, 7);
             bool bit6 = Utils.GetBit(int32_frame_head, 6);
-            channels = (((int32_frame_head >> 6) & 0x3) == 3) ? 1 : 2; // from mplayer
+            channels = (((int32_frame_head >> 6) & 0x3) == 3) ? 1 : 2;
 
             #endregion
 
@@ -387,16 +385,26 @@ namespace GMusicDemuxer
             spf = SamplingPerFrame[mpeg_ver][(int)layer];
             if (layer == Layers.LayerI)
             {
-                frame_size = spf / 8 * bit_rate / sampling_frequency + padding * 4;
+                frame_size = spf / 8 * (bit_rate_kbps * 1000) / sampling_frequency + padding * 4;
             }
             else if (layer == Layers.LayerII || layer == Layers.LayerIII)
             {
-                frame_size = spf / 8 * bit_rate / sampling_frequency + padding;
+                frame_size = spf / 8 * (bit_rate_kbps * 1000) / sampling_frequency + padding;
             }
 
             #endregion
 
             return true;
+        }
+
+        private static void AppendByte(byte[] src, byte append)
+        {
+            int len = src.Length;
+            for (int i = 0; i <= len - 2; i++)
+            {
+                src[i] = src[i + 1];
+            }
+            src[len - 1] = append;
         }
     }
 
