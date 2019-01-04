@@ -8,6 +8,10 @@ using System.Text;
 
 namespace Kagura.Player.Demuxers
 {
+    /// <summary>
+    /// http://www.cppblog.com/codejie/archive/2009/03/26/77916.aspx
+    /// http://www.mpg123.de/api/
+    /// </summary>
     public class DemuxerMPG123 : Demuxer
     {
         #region 类变量
@@ -107,6 +111,21 @@ namespace Kagura.Player.Demuxers
             #endregion
 
             #region 根据流格式初始化PCM数据格式
+
+            int bps = 0;
+            if (encoding == (int)mpg123_enc_enum.MPG123_ENC_16)
+            {
+                bps = 16;
+            }
+            else if (encoding == (int)mpg123_enc_enum.MPG123_ENC_32)
+            {
+                bps = 32;
+            }
+            else
+            {
+                bps = 8;
+                logger.WarnFormat("bps:{0}", bps);
+            }
 
             #endregion
 

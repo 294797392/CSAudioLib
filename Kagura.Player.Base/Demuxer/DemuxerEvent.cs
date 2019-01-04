@@ -7,6 +7,9 @@ namespace Kagura.Player.Base
 {
     public enum DemuxerEvent
     {
-        Format
+        /// <summary>
+        /// 检测到了音频格式
+        /// </summary>
+        AudioFormat
     }
 }

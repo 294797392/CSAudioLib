@@ -47,6 +47,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Demuxer\DemuxerPacket.cs" />
     <Compile Include="Demuxer\DemuxerRegistry.cs" />
     <Compile Include="Demuxer\DemuxerEvent.cs" />
     <Compile Include="Demuxer\Demuxer.cs" />
