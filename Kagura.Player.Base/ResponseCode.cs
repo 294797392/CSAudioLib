@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MiniMusicCore
+namespace Kagura.Player.Base
 {
     public class ResponseCode
     {
@@ -15,7 +15,5 @@ namespace MiniMusicCore
 
         /* 参数无效 */
         public static readonly int INVALIDE_PARAMS = 102; 
-
-
     }
 }

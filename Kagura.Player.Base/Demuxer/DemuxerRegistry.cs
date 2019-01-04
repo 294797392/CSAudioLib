@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GMusicCore.Demuxer
+namespace Kagura.Player.Base
 {
     public static class DemuxerRegistry
     {
@@ -18,14 +18,14 @@ namespace GMusicCore.Demuxer
         /// <summary>
         /// DemuxerName -> Demuxer Instance
         /// </summary>
-        private static Dictionary<string, IGMusicDemuxer> demuxerMap = new Dictionary<string, IGMusicDemuxer>();
+        private static Dictionary<string, Demuxer> demuxerMap = new Dictionary<string, Demuxer>();
 
         static DemuxerRegistry()
         {
 
         }
 
-        public static bool FindDemuxer(string demuxer_name, out IGMusicDemuxer demuxer)
+        public static bool FindDemuxer(string demuxer_name, out Demuxer demuxer)
         {
             if (!demuxerMap.TryGetValue(demuxer_name, out demuxer))
             {
@@ -38,7 +38,7 @@ namespace GMusicCore.Demuxer
 
                 try
                 {
-                    demuxer = ConfigFactory<IGMusicDemuxer>.CreateInstance<IGMusicDemuxer>(classEntry);
+                    demuxer = ConfigFactory<Demuxer>.CreateInstance<Demuxer>(classEntry);
                 }
                 catch (Exception ex)
                 {
@@ -52,7 +52,7 @@ namespace GMusicCore.Demuxer
             return true;
         }
 
-        public static IEnumerable<IGMusicDemuxer> GetAllDemuxers()
+        public static IEnumerable<Demuxer> GetAllDemuxers()
         {
             throw new NotImplementedException();
         }

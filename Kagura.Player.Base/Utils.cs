@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MiniMusicCore
+namespace Kagura.Player.Base
 {
     public class Utils
     {

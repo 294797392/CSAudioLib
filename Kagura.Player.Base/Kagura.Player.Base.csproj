@@ -48,19 +48,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Demuxer\DemuxerRegistry.cs" />
-    <Compile Include="Demuxer\GMusicDemuxer.cs" />
-    <Compile Include="Demuxer\GMusicDemuxerLookup.cs" />
-    <Compile Include="Demuxer\GMusicDemuxerNames.cs" />
-    <Compile Include="GMusicFormats.cs" />
-    <Compile Include="GMusicPlayer.cs" />
-    <Compile Include="libgmusic\demux_ffmpeg.cs" />
-    <Compile Include="libgmusic\helper.cs" />
-    <Compile Include="Stream\MusicStreamType.cs" />
-    <Compile Include="MusicSource.cs" />
-    <Compile Include="Stream\GMusicStreamLookup.cs" />
-    <Compile Include="Stream\GMusicStream.cs" />
+    <Compile Include="Demuxer\DemuxerEvent.cs" />
+    <Compile Include="Demuxer\Demuxer.cs" />
+    <Compile Include="Demuxer\DemuxerLookup.cs" />
+    <Compile Include="Demuxer\MPG123Parser.cs" />
+    <Compile Include="KPlayer.cs" />
+    <Compile Include="MediaStream\StreamType.cs" />
+    <Compile Include="MediaStream\StreamLookup.cs" />
+    <Compile Include="MediaStream\IStream.cs" />
     <Compile Include="DefaultValues.cs" />
-    <Compile Include="GMusicContext.cs" />
+    <Compile Include="KContext.cs" />
+    <Compile Include="PCMFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseCode.cs" />
     <Compile Include="Utils.cs" />

@@ -1,6 +1,4 @@
-﻿using GMusicCore.libgmusic;
-using GMusicDemuxer;
-using GMusicStream;
+﻿using libmpg123;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
-using static GMusicCore.libgmusic.demux_ffmpeg;
 
 namespace DirectSoundLibTest
 {
@@ -23,10 +20,7 @@ namespace DirectSoundLibTest
 
         public App()
         {
-            KMFileStream fs = new KMFileStream(new GMusicCore.MusicSource() { Uri = "1.mp3" });
-            fs.Open();
-            GMusicAudioDemuxer demuxer = new GMusicAudioDemuxer();
-            demuxer.Open(fs);
+            mpg123.mpg123_init();
         }
     }
 }
