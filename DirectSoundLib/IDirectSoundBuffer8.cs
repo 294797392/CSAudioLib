@@ -30,7 +30,7 @@ namespace DirectSoundLib
         int GetFrequency(out uint pdwFrequency);
 
         [PreserveSig]
-        int GetStatus(out uint pdwStatus);
+        int GetStatus(out int pdwStatus);
 
         [PreserveSig]
         int Initialize(IntPtr pDirectSound, ref DSBUFFERDESC pcDSBufferDesc);
@@ -50,7 +50,7 @@ namespace DirectSoundLib
         /// </param>
         /// <returns></returns>
         [PreserveSig]
-        int Lock(uint dwOffset, uint dwBytes, out IntPtr ppvAudioPtr1, out uint pdwAudioBytes1, out IntPtr ppvAudioPtr2, out uint pdwAudioBytes2, uint dwFlags);
+        int Lock(int dwOffset, int dwBytes, out IntPtr ppvAudioPtr1, out int pdwAudioBytes1, out IntPtr ppvAudioPtr2, out int pdwAudioBytes2, int dwFlags);
 
         /// <summary>
         /// 
@@ -81,7 +81,7 @@ namespace DirectSoundLib
         int Stop();
 
         [PreserveSig]
-        int Unlock(IntPtr pvAudioPtr1, uint dwAudioBytes1, IntPtr pvAudioPtr2, uint dwAudioBytes2);
+        int Unlock(IntPtr pvAudioPtr1, int dwAudioBytes1, IntPtr pvAudioPtr2, int dwAudioBytes2);
 
         [PreserveSig]
         int Restore();

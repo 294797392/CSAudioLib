@@ -12,7 +12,14 @@ namespace Kagura.Player.Base
     {
         public event Action<DemuxerEvent, object> Event;
 
+        public AudioFormat AudioFormat { get; private set; }
+
         public abstract string Name { get; }
+
+        public Demuxer()
+        {
+            this.AudioFormat = new AudioFormat();
+        }
 
         /// <summary>
         /// 探测是否支持此媒体流

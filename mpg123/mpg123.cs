@@ -201,5 +201,13 @@ namespace libmpg123
         /// <returns>MPG123_OK or error/message code.</returns>
         [DllImport(DLLNAME_LIBMPG123, CallingConvention = CallingConvention.Cdecl)]
         public static extern int mpg123_feed(IntPtr mh, IntPtr data, int size);
+
+        /// <summary>
+        /// 获取音频流的采样长度（采样数）
+        /// </summary>
+        /// <param name="mg"></param>
+        /// <returns></returns>
+        [DllImport(DLLNAME_LIBMPG123, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int mpg123_length(IntPtr mg);
     }
 }

@@ -47,7 +47,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Demuxer\DemuxerPacket.cs" />
+    <Compile Include="AODevice\AODevice.cs" />
     <Compile Include="Demuxer\DemuxerRegistry.cs" />
     <Compile Include="Demuxer\DemuxerEvent.cs" />
     <Compile Include="Demuxer\Demuxer.cs" />
@@ -59,7 +59,7 @@
     <Compile Include="MediaStream\IStream.cs" />
     <Compile Include="DefaultValues.cs" />
     <Compile Include="KContext.cs" />
-    <Compile Include="PCMFormat.cs" />
+    <Compile Include="AudioFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseCode.cs" />
     <Compile Include="Utils.cs" />

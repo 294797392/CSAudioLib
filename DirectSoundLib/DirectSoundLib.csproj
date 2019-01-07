@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLSID.cs" />
+    <Compile Include="DirectSoundHelper.cs" />
     <Compile Include="DSBUFFERDESC.cs" />
     <Compile Include="DSERR.cs" />
     <Compile Include="GUID.cs" />

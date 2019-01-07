@@ -127,6 +127,10 @@ namespace Kagura.Player.Demuxers
                 logger.WarnFormat("bps:{0}", bps);
             }
 
+            base.AudioFormat.Channel = channel;
+            base.AudioFormat.SamplesPerSec = rate;
+            base.AudioFormat.BitsPerSample = bps;
+
             #endregion
 
             return true;
