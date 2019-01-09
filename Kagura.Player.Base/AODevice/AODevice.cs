@@ -7,7 +7,7 @@ namespace Kagura.Player.Base.AODevice
 {
     public abstract class AODevice
     {
-        public abstract bool Open(AudioFormat af);
+        public abstract bool Open(WaveFormat af);
 
         public abstract bool Play(byte[] data);
 

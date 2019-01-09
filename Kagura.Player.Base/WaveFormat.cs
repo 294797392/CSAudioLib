@@ -8,7 +8,7 @@ namespace Kagura.Player.Base
     /// <summary>
     /// 存储PCM波形文件的信息
     /// </summary>
-    public class AudioFormat
+    public class WaveFormat
     {
         /// <summary>
         /// 通道数量

@@ -38,7 +38,7 @@ namespace Kagura.Player.Audio
 
         private IntPtr windowHandle;
 
-        private AudioFormat audioFormat;
+        private WaveFormat audioFormat;
 
         private int write_offset;
         private int buffer_size;
@@ -85,7 +85,7 @@ namespace Kagura.Player.Audio
 
         #region 公开接口
 
-        public override bool Open(AudioFormat af)
+        public override bool Open(WaveFormat af)
         {
             this.audioFormat = af;
 

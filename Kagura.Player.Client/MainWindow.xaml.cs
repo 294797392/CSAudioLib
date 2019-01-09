@@ -29,7 +29,7 @@ namespace MiniMusic
 
             KFileStream stream = new KFileStream();
             stream.Open("Kalimba.mp3");
-            DemuxerMPG123 demuxer = new DemuxerMPG123();
+            DemuxerAudio demuxer = new DemuxerAudio();
             demuxer.Open(stream);
 
             //var req = WebRequest.Create("https://www.icbc.com.cn/icbc/");

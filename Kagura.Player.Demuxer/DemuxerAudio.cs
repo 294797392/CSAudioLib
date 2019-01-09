@@ -11,8 +11,10 @@ namespace Kagura.Player.Demuxers
     /// <summary>
     /// http://www.cppblog.com/codejie/archive/2009/03/26/77916.aspx
     /// http://www.mpg123.de/api/
+    /// http://www.guyiren.com/archives/2684
+    /// http://id3.org/mp3Frame
     /// </summary>
-    public class DemuxerMPG123 : Demuxer
+    public class DemuxerAudio : Demuxer
     {
         #region 类变量
 
@@ -134,6 +136,15 @@ namespace Kagura.Player.Demuxers
             #endregion
 
             return true;
+        }
+
+        /// <summary>
+        /// 获取下一个音频帧信息
+        /// </summary>
+        /// <returns></returns>
+        public override AudioPacket GetNextAudioPacket()
+        {
+            throw new NotImplementedException();
         }
 
         public override bool Close()

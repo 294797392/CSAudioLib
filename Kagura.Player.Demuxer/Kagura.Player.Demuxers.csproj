@@ -47,7 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DemuxerMPG123.cs" />
+    <Compile Include="DemuxerAudio.cs" />
+    <Compile Include="GMusicAudioDemuxer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -10,16 +10,30 @@ namespace Kagura.Player.Base
     /// </summary>
     public abstract class Demuxer
     {
+        #region 事件
+
         public event Action<DemuxerEvent, object> Event;
 
-        public AudioFormat AudioFormat { get; private set; }
+        #endregion
+
+        #region 属性
+
+        public WaveFormat AudioFormat { get; private set; }
 
         public abstract string Name { get; }
 
+        #endregion
+
+        #region 构造方法
+
         public Demuxer()
         {
-            this.AudioFormat = new AudioFormat();
+            this.AudioFormat = new WaveFormat();
         }
+
+        #endregion
+
+        #region 公开接口
 
         /// <summary>
         /// 探测是否支持此媒体流
@@ -28,7 +42,17 @@ namespace Kagura.Player.Base
         /// <returns></returns>
         public abstract bool Open(IStream stream);
 
+        /// <summary>
+        /// 获取下一个音频帧信息
+        /// </summary>
+        /// <returns></returns>
+        public abstract AudioPacket GetNextAudioPacket();
+
         public abstract bool Close();
+
+        #endregion
+
+        #region 实例方法
 
         protected virtual void NotifyEvent(DemuxerEvent evt, object data)
         {
@@ -37,5 +61,7 @@ namespace Kagura.Player.Base
                 this.Event(evt, data);
             }
         }
+
+        #endregion
     }
 }
