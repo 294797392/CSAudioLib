@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Kagura.Player.Base
 {
-    public class Utils
+    public static class Utils
     {
         /// <summary>
         /// 结构体转byte数组, 不会释放内存

@@ -56,6 +56,7 @@
     <Compile Include="Demuxer\Demuxer.cs" />
     <Compile Include="Demuxer\DemuxerLookup.cs" />
     <Compile Include="Demuxer\MPG123Parser.cs" />
+    <Compile Include="ID3Tag\ID3V2Flags.cs" />
     <Compile Include="KPlayer.cs" />
     <Compile Include="Stream\StreamType.cs" />
     <Compile Include="Stream\StreamLookup.cs" />

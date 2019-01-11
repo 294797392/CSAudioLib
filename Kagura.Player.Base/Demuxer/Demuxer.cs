@@ -18,8 +18,19 @@ namespace Kagura.Player.Base
 
         #region 属性
 
+        /// <summary>
+        /// 检测出来的音频封装格式
+        /// </summary>
+        public AudioFormats Format { get; protected set; }
+
+        /// <summary>
+        /// PCM格式信息
+        /// </summary>
         public WaveFormat AudioFormat { get; private set; }
 
+        /// <summary>
+        /// Demuxer名字
+        /// </summary>
         public abstract string Name { get; }
 
         #endregion

@@ -39,6 +39,14 @@ namespace Kagura.Player.Streams
             }
         }
 
+        public override long Position
+        {
+            get
+            {
+                return this.stream.Position;
+            }
+        }
+
         public override string Name
         {
             get
@@ -82,18 +90,9 @@ namespace Kagura.Player.Streams
             return this.stream.Read(buff, 0, size);
         }
 
-        public override bool ReadByte(out byte data)
+        public override int ReadByte()
         {
-            data = 0;
-            int len = this.stream.ReadByte();
-            if (len == -1)
-            {
-                return false;
-            }
-
-            data = (byte)len;
-
-            return true;
+            return this.stream.ReadByte();
         }
 
         public override void Skip(int size)

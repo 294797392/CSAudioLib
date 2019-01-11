@@ -14,9 +14,9 @@ namespace Kagura.Player.Base
 
         public int Length { get; set; }
 
-        public byte[] FrameData { get; set; }
+        public byte[] Body { get; set; }
 
-        public byte[] FrameHeader { get; set; }
+        public byte[] Header { get; set; }
     }
 
     public class AudioPacket : DemuxerPacket

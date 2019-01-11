@@ -41,8 +41,11 @@ namespace Kagura.Player.Codecs
         {
             switch (formats)
             {
-                case AudioFormats.MP3: return true;
-                default: return false;
+                case AudioFormats.MP3:
+                case AudioFormats.AAC:
+                    return true;
+                default:
+                    return false;
             }
         }
 

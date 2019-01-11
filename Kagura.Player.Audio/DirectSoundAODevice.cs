@@ -218,52 +218,52 @@ namespace Kagura.Player.Audio
 
         #region 实例方法
 
-        private bool CreateBufferNotifications()
-        {
-            int dsErr = DSERR.DS_OK;
+        //private bool CreateBufferNotifications()
+        //{
+        //    int dsErr = DSERR.DS_OK;
 
-            // 获取IDirectSoundNotify8接口
-            Guid iid_dsNotify8 = new Guid(IID.IID_IDirectSoundNotify8);
-            IntPtr pdsNotify8;
-            IDirectSoundNotify8 dsNotify8;
-            Marshal.QueryInterface(this.pdsb8, ref iid_dsNotify8, out pdsNotify8);
-            dsNotify8 = Marshal.GetObjectForIUnknown(pdsNotify8) as IDirectSoundNotify8;
+        //    // 获取IDirectSoundNotify8接口
+        //    Guid iid_dsNotify8 = new Guid(IID.IID_IDirectSoundNotify8);
+        //    IntPtr pdsNotify8;
+        //    IDirectSoundNotify8 dsNotify8;
+        //    Marshal.QueryInterface(this.pdsb8, ref iid_dsNotify8, out pdsNotify8);
+        //    dsNotify8 = Marshal.GetObjectForIUnknown(pdsNotify8) as IDirectSoundNotify8;
 
-            try
-            {
-                uint written;
-                WAVEFORMATEX wfx;
-                dsErr = this.dsb8.GetFormat(out wfx, (uint)Marshal.SizeOf(typeof(WAVEFORMATEX)), out written);
-                if (dsErr != DSERR.DS_OK)
-                {
-                    logger.ErrorFormat("GetFormat失败, DSERR = {0}", dsErr);
-                    return false;
-                }
+        //    try
+        //    {
+        //        uint written;
+        //        WAVEFORMATEX wfx;
+        //        dsErr = this.dsb8.GetFormat(out wfx, (uint)Marshal.SizeOf(typeof(WAVEFORMATEX)), out written);
+        //        if (dsErr != DSERR.DS_OK)
+        //        {
+        //            logger.ErrorFormat("GetFormat失败, DSERR = {0}", dsErr);
+        //            return false;
+        //        }
 
-                this.rgdsbpn = new DSBPOSITIONNOTIFY[Consts.BUFF_NOTIFY_TIMES];
-                this.notifyHwnd_close = new IntPtr[Consts.BUFF_NOTIFY_TIMES];
-                for (int idx = 0; idx < Consts.BUFF_NOTIFY_TIMES; idx++)
-                {
-                    IntPtr pHandle = Natives.CreateEvent(IntPtr.Zero, false, false, null);
-                    this.notifyHwnd_close[idx] = pHandle;
-                    this.rgdsbpn[idx].dwOffset = (uint)(Consts.BUFF_NOTIFY_SIZE * idx);
-                    this.rgdsbpn[idx].hEventNotify = pHandle;
-                }
+        //        this.rgdsbpn = new DSBPOSITIONNOTIFY[Consts.BUFF_NOTIFY_TIMES];
+        //        this.notifyHwnd_close = new IntPtr[Consts.BUFF_NOTIFY_TIMES];
+        //        for (int idx = 0; idx < Consts.BUFF_NOTIFY_TIMES; idx++)
+        //        {
+        //            IntPtr pHandle = Natives.CreateEvent(IntPtr.Zero, false, false, null);
+        //            this.notifyHwnd_close[idx] = pHandle;
+        //            this.rgdsbpn[idx].dwOffset = (uint)(Consts.BUFF_NOTIFY_SIZE * idx);
+        //            this.rgdsbpn[idx].hEventNotify = pHandle;
+        //        }
 
-                dsErr = dsNotify8.SetNotificationPositions(Consts.BUFF_NOTIFY_TIMES, Marshal.UnsafeAddrOfPinnedArrayElement(rgdsbpn, 0));
-                if (dsErr != DSERR.DS_OK)
-                {
-                    logger.ErrorFormat("SetNotificationPositions失败, DSERROR = {0}", dsErr);
-                    return false;
-                }
-            }
-            finally
-            {
-                Marshal.Release(pdsNotify8);
-            }
+        //        dsErr = dsNotify8.SetNotificationPositions(Consts.BUFF_NOTIFY_TIMES, Marshal.UnsafeAddrOfPinnedArrayElement(rgdsbpn, 0));
+        //        if (dsErr != DSERR.DS_OK)
+        //        {
+        //            logger.ErrorFormat("SetNotificationPositions失败, DSERROR = {0}", dsErr);
+        //            return false;
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        Marshal.Release(pdsNotify8);
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
         private bool WriteDataToBuffer(byte[] data)
         {

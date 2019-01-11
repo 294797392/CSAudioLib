@@ -25,6 +25,11 @@ namespace Kagura.Player.Base
         public abstract long TotalLength { get; }
 
         /// <summary>
+        /// 获取当前流的位置
+        /// </summary>
+        public abstract long Position { get; }
+
+        /// <summary>
         /// 如果剩余的音频流数据为0，返回true， 否则返回false
         /// </summary>
         public abstract bool EOF { get; }
@@ -42,14 +47,22 @@ namespace Kagura.Player.Base
         /// </summary>
         /// <param name="buff">存储数据的缓冲区</param>
         /// <param name="size">要读取的数据大小</param>
-        /// <returns>读取的数据大小</returns>
+        /// <returns>
+        /// 读取的数据大小
+        /// 返回0表示到流的末尾
+        /// 大于0表示读取的字节数
+        /// </returns>
         public abstract int Read(byte[] buff, int size);
 
         /// <summary>
         /// 读取一个字节的数据
         /// </summary>
-        /// <returns></returns>
-        public abstract bool ReadByte(out byte data);
+        /// <returns>
+        /// 读取的数据大小
+        /// 返回0表示到流的末尾
+        /// 大于0表示读取的字节数
+        /// </returns>
+        public abstract int ReadByte();
 
         /// <summary>
         /// 从流的当前位置跳过size个字节
