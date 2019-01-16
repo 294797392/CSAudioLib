@@ -27,6 +27,20 @@ namespace Kagura.Player.Demuxers
         public const int SIZE_PER_READ = 4096;
         public const int PROBE_FORMATE_MAX_SIZE = 1024 * 512;
 
+        private static int[,,] BitRateTable = new int[2, 3, 16]
+        {
+            {
+                { 0,32,64,96,128,160,192,224,256,288,320,352,384,416,448,0 },
+                { 0,32,48,56, 64, 80, 96,112,128,160,192,224,256,320,384,0 },
+                { 0,32,40,48, 56, 64, 80, 96,112,128,160,192,224,256,320,0 }
+            },
+            {
+                { 0,32,48,56,64,80,96,112,128,144,160,176,192,224,256,0 },
+                { 0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,0 },
+                { 0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,0 }
+            }
+        };
+
         #endregion
 
         #region 实例变量
@@ -184,7 +198,7 @@ namespace Kagura.Player.Demuxers
                 #region 解析Header
 
                 int major_version, revision, flag, tag_size;
-                if (!this.ParseID3V2Header(stream, out major_version, out revision, out flag, out tag_size))
+                if (!this.ParseID3V2(stream, out major_version, out revision, out flag, out tag_size))
                 {
                     return false;
                 }
@@ -193,20 +207,17 @@ namespace Kagura.Player.Demuxers
 
                 #region 根据解析Header得到的tag_size，跳过tag_size字节，准备查找第一帧的位置
 
+                /* tag_size不包含footer的大小，如果有footer，要加上10个字节，因为footer的大小是10个字节 */
                 if ((flag & (int)ID3V2Flags.FooterPresent) == (int)ID3V2Flags.FooterPresent)
                 {
-                    stream.Skip(tag_size - 10);
+                    tag_size += 10;
                 }
-                else
-                {
-                    stream.Skip(tag_size);
-                }
+                stream.Skip(tag_size);
 
                 #endregion
 
                 #region 解析MP3第一帧
 
-                int layer = 0;
                 if (!this.ParseMP3Frame(stream))
                 {
                     return false;
@@ -245,7 +256,7 @@ namespace Kagura.Player.Demuxers
         /// <param name="flag"></param>
         /// <param name="tag_size"></param>
         /// <returns></returns>
-        private bool ParseID3V2Header(IStream stream, out int major_version, out int revision, out int flag, out int tag_size)
+        private bool ParseID3V2(IStream stream, out int major_version, out int revision, out int flag, out int tag_size)
         {
             /*
              *  +-----------------------------+
@@ -298,8 +309,8 @@ namespace Kagura.Player.Demuxers
         /// <returns></returns>
         private bool ParseMP3Frame(IStream stream)
         {
-            int bit_rate_index, mpeg, layer, sampling_frequency, padding, stereo = 0;
-            int bitrate = 0;
+            int bit_rate_index, mpeg, layer, sampling_frequency, padding, stereo = 0, lsf = 0;
+            int bitrate = 0, sample_per_frame = 0, sample_per_second = 0, padding_size = 0, frame_size;
 
             #region 查找帧头位置
 
@@ -311,7 +322,12 @@ namespace Kagura.Player.Demuxers
             uint newhead = (uint)hdr_bytes[0] << 24 | (uint)hdr_bytes[1] << 16 | (uint)hdr_bytes[2] << 8 | (uint)hdr_bytes[3];
             while ((newhead & 0xFFE00000) != 0xFFE00000)
             {
-                newhead = newhead << 8 | (uint)stream.ReadByte();
+                int c = stream.ReadByte();
+                if (c == -1)
+                {
+                    return false;
+                }
+                newhead = newhead << 8 | (uint)c;
             }
 
             if (this.first_frame_pos == -1)
@@ -321,16 +337,19 @@ namespace Kagura.Player.Demuxers
 
             #endregion
 
+            #region 解析帧头字段
+
             /* mpeg版本 */
             mpeg = (int)((newhead >> 19) & 3);
-            if (mpeg == 3)
+            if (mpeg == 1)
             {
                 return false;
             }
+            lsf = mpeg == 0 ? 1 : 0;
 
             /* Layer版本 */
-            layer = (int)(4 - ((newhead >> 17) & 3));
-            if (layer == 4)
+            layer = (int)(((newhead >> 17) & 3));
+            if (layer == 0)
             {
                 return false;
             }
@@ -342,21 +361,96 @@ namespace Kagura.Player.Demuxers
                 return false;
             }
 
-            /* 比特率索引 */
+            /* 比特率，kbps，1kbit per second，每秒传输比特, 1kbit = 1000bit */
             bit_rate_index = (int)(newhead >> 12) & 0xF;
+            bitrate = BitRateTable[lsf, layer - 1, bit_rate_index];
 
             /* 填充 */
             padding = (int)(newhead >> 9) & 0x1;
+            padding_size = layer == 3 ? 4 : 1;
 
             /* 声道模式 */
             stereo = (((newhead >> 6) & 0x3) == 3) ? 1 : 2;
 
+            /* 每帧的采样数, spf, sample per frame */
+            if (layer == 3)
+            {
+                sample_per_frame = 384;
+            }
+            else if (layer == 2)
+            {
+                sample_per_frame = 1152;
+            }
+            else if (layer == 1)
+            {
+                if (mpeg == 3)
+                {
+                    sample_per_frame = 1152;
+                }
+                else
+                {
+                    sample_per_frame = 576;
+                }
+            }
 
+            /* 每秒采样数，采样频率 */
+            if (mpeg == 3)
+            {
+                /* mpeg1 */
+                if (sampling_frequency == 0)
+                {
+                    sample_per_second = 44100;
+                }
+                else if (sampling_frequency == 1)
+                {
+                    sample_per_second = 48000;
+                }
+                else if (sampling_frequency == 2)
+                {
+                    sample_per_second = 32000;
+                }
+            }
+            else if (mpeg == 2)
+            {
+                /* mpeg2 */
+                if (sampling_frequency == 0)
+                {
+                    sample_per_second = 22050;
+                }
+                else if (sampling_frequency == 1)
+                {
+                    sample_per_second = 24000;
+                }
+                else if (sampling_frequency == 2)
+                {
+                    sample_per_second = 16000;
+                }
+            }
+            else if (mpeg == 0)
+            {
+                /* mpeg2.5 */
+                if (sampling_frequency == 0)
+                {
+                    sample_per_second = 11205;
+                }
+                else if (sampling_frequency == 1)
+                {
+                    sample_per_second = 12000;
+                }
+                else if (sampling_frequency == 2)
+                {
+                    sample_per_second = 8000;
+                }
+            }
+
+            /* 帧大小 */
+            frame_size = ((sample_per_frame / 8 * bitrate * 1000) / sample_per_second) + padding_size;
+
+            #endregion
 
             return true;
         }
 
+        #endregion
     }
-
-    #endregion
 }
