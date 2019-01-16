@@ -1,5 +1,4 @@
-﻿using libmpg123;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -20,7 +19,7 @@ namespace DirectSoundLibTest
 
         public App()
         {
-            mpg123.mpg123_init();
+            //mpg123.mpg123_init();
         }
     }
 }

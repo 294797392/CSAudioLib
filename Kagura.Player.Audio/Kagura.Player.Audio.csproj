@@ -47,13 +47,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectSoundLib\DirectSoundLib.csproj">
-      <Project>{c95b8fae-6cc5-4d6d-9b80-a50643ae472a}</Project>
-      <Name>DirectSoundLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Kagura.Player.Base\Kagura.Player.Base.csproj">
       <Project>{1f787331-23cc-4464-831d-e43005f35932}</Project>
       <Name>Kagura.Player.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libdsound\libdsound.csproj">
+      <Project>{c95b8fae-6cc5-4d6d-9b80-a50643ae472a}</Project>
+      <Name>libdsound</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

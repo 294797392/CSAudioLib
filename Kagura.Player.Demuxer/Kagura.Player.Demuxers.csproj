@@ -55,10 +55,6 @@
       <Project>{1f787331-23cc-4464-831d-e43005f35932}</Project>
       <Name>Kagura.Player.Base</Name>
     </ProjectReference>
-    <ProjectReference Include="..\mpg123\libmpg123.csproj">
-      <Project>{a542cee9-425e-43fb-83cc-f3bcaf9aba8b}</Project>
-      <Name>libmpg123</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
