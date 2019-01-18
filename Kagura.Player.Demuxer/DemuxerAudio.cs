@@ -51,7 +51,7 @@ namespace Kagura.Player.Demuxers
         /// <summary>
         /// 第一帧的位置
         /// </summary>
-        private long first_frame_pos = -1;
+        private long current_frame_position = -1;
 
         #endregion
 
@@ -234,7 +234,15 @@ namespace Kagura.Player.Demuxers
         /// <returns></returns>
         public override AudioPacket GetNextAudioPacket()
         {
-            throw new NotImplementedException();
+            long frame_position;
+            int frame_size;
+            if (!this.ParseMP3Frame(this.stream, out frame_position, out frame_size))
+            {
+                return null;
+            }
+
+            AudioPacket packet = new AudioPacket(); 
+            return packet;
         }
 
         public override bool Close()
@@ -305,11 +313,14 @@ namespace Kagura.Player.Demuxers
         /// 解析MP3数据帧
         /// </summary>
         /// <param name="stream"></param>
+        /// <param name="frame_size">不包括帧头的大小</param>
         /// <returns></returns>
-        private bool ParseMP3Frame(IStream stream)
+        private bool ParseMP3Frame(IStream stream, out long frame_position, out int frame_size)
         {
             int bit_rate_index, mpeg, layer, sampling_frequency, padding, stereo = 0, lsf = 0;
-            int bitrate = 0, sample_per_frame = 0, sample_per_second = 0, padding_size = 0, frame_size;
+            int bitrate = 0, sample_per_frame = 0, sample_per_second = 0, padding_size = 0;
+            frame_size = 0;
+            frame_position = 0;
 
             #region 查找帧头位置
 
@@ -329,10 +340,7 @@ namespace Kagura.Player.Demuxers
                 newhead = newhead << 8 | (uint)c;
             }
 
-            if (this.first_frame_pos == -1)
-            {
-                this.first_frame_pos = stream.Position - 4;
-            }
+            frame_position = stream.Position - 4;
 
             #endregion
 

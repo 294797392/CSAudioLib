@@ -14,6 +14,12 @@ namespace Kagura.Player.Codecs
 
         #endregion
 
+        #region 实例变量
+
+        private IntPtr mpg123;
+
+        #endregion
+
         #region 属性
 
         public override string Name => "mpg123 audio decoder";
