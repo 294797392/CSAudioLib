@@ -1,13 +1,8 @@
-# gmedia
+# media center
 
-### gplay
-* 播放本地pcm文件
-* 播放本地mp3文件（TODO）
+## 听音乐
 
-### grecord
+## 看在线/离线视频
 
-### gdecoder
+## TVOS
 
-### gencoder
-
-### gplay_api
