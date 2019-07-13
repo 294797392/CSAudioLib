@@ -11,6 +11,10 @@ namespace MediaCenter.Base.AVDevices
     /// </summary>
     public abstract class AbstractAODevice
     {
+        public abstract string Author { get; }
+
+        public abstract List<string> Contributors { get; }
+
         public abstract bool Open(WaveFormat af);
 
         public abstract int Play(byte[] data);

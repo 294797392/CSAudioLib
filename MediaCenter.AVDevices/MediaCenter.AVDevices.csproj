@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="DirectSoundAODevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WaveoutAODevice.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MediaCenter.Base\MediaCenter.Base.csproj">

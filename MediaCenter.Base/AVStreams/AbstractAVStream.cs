@@ -13,6 +13,10 @@ namespace MediaCenter.Base
     {
         private static log4net.ILog logger = log4net.LogManager.GetLogger("AbstractAVStream");
 
+        public abstract string Author { get; }
+
+        public abstract List<string> Contributors { get; }
+
         public abstract string Name { get; }
 
         /// <summary>

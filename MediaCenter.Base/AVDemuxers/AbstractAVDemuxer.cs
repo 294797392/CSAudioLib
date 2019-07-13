@@ -20,6 +20,10 @@ namespace MediaCenter.Base.AVDemuxers
 
         #region 属性
 
+        public abstract string Author { get; }
+
+        public abstract List<string> Contributors { get; }
+
         /// <summary>
         /// 检测出来的音频封装格式
         /// </summary>

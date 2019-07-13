@@ -28,6 +28,10 @@ namespace MediaCenter.Base.AVCodecs
 
         public abstract string Name { get; }
 
+        public abstract string Author { get; }
+
+        public abstract List<string> Contributors { get; }
+
         #endregion
 
         public AbstractAVDecoder()
