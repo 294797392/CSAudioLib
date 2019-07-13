@@ -1,11 +1,17 @@
-﻿using MediaCenter.AVDemuxers;
+﻿using Kagura.Player.Base;
+using MediaCenter.AVCodecs;
+using MediaCenter.AVDemuxers;
+using MediaCenter.AVDevices;
 using MediaCenter.AVStreams;
+using MediaCenter.Base.AVDemuxers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -28,9 +34,53 @@ namespace MiniMusic
             InitializeComponent();
 
             AVFileStream stream = new AVFileStream();
-            stream.Open("Kalimba.mp3");
+            stream.Open("1.mp3");
+
             DemuxerAudio demuxer = new DemuxerAudio();
             demuxer.Open(stream);
+
+            DecoderMPG123 decoder = new DecoderMPG123();
+            decoder.Open(demuxer);
+
+
+            List<byte> buffers = new List<byte>();
+            byte[] buffer = null;
+            decoder.DecodeData(out buffer, 9999999);
+            buffers.AddRange(buffer);
+
+            File.WriteAllBytes("pcm", buffers.ToArray());
+
+            //DirectSoundAODevice device = new DirectSoundAODevice();
+            //device.Open(new WaveFormat() { BitsPerSample = 16, Channel = 2, SamplesPerSec = 44100 });
+            //while (true)
+            //{
+            //    int size = device.GetFreeSpaceSize();
+            //    if (size > 0)
+            //    {
+            //        Thread.Sleep(1000);
+            //        //Console.WriteLine("size={0}", size);
+            //        byte[] buffer = null;
+            //        if (decoder.DecodeData(out buffer, size))
+            //        {
+            //            int played = 0;
+            //            int total = buffer.Length;
+            //            while (true)
+            //            {
+            //                byte[] tmp = new byte[total - played];
+            //                Buffer.BlockCopy(buffer, played, tmp, 0, tmp.Length);
+            //                played += device.Play(tmp);
+            //                if (total == played)
+            //                {
+            //                    break;
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //    }
+            //}
+
 
             //var req = WebRequest.Create("https://www.icbc.com.cn/icbc/");
             //var resp = req.GetResponse();

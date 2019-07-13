@@ -1,5 +1,8 @@
-﻿using Kagura.Player.Base;
+﻿using ICare.Utility.Misc;
+using Kagura.Player.Base;
 using MediaCenter.Base;
+using MediaCenter.Base.AVDemuxers;
+using MediaCenter.Base.ID3;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,8 +20,10 @@ namespace MediaCenter.AVDemuxers
     /// http://www.guyiren.com/archives/2684
     /// http://id3.org/mp3Frame
     /// http://id3.org/id3v2.4.0-structure
+    /// 
+    /// mp3 编码的只是一个数字，没有位深，解码出来 pcm 想多少位都可以
     /// </summary>
-    public class DemuxerAudio : Demuxer
+    public class DemuxerAudio : AbstractAVDemuxer
     {
         #region 类变量
 
@@ -47,12 +52,6 @@ namespace MediaCenter.AVDemuxers
 
         //private IntPtr mpg123Handle = IntPtr.Zero;
         private AbstractAVStream stream;
-        private AudioFormats format;
-
-        /// <summary>
-        /// 第一帧的位置
-        /// </summary>
-        private long current_frame_position = -1;
 
         #endregion
 
@@ -177,34 +176,21 @@ namespace MediaCenter.AVDemuxers
             }
             else if (header[0] == 'I' && header[1] == 'D' && header[2] == '3')
             {
-                #region 解析ID3V2标签
-
+                // 解析ID3V2格式并初始化DemuxerStream
+                byte[] tag;
                 int major_version, revision, flag, tag_size;
-                if (!this.ParseID3V2Tag(stream, out major_version, out revision, out flag, out tag_size))
+                if (!this.ParseID3V2Tag(stream, out major_version, out revision, out flag, out tag_size, out tag))
                 {
                     return false;
                 }
-
-                #endregion
+                base.ContainerHeader = new byte[header.Length + tag_size];
+                Buffer.BlockCopy(header, 0, this.ContainerHeader, 0, header.Length);
+                Buffer.BlockCopy(tag, 0, this.ContainerHeader, header.Length, tag_size);
             }
+
+            this.stream = stream;
 
             return true;
-        }
-
-        /// <summary>
-        /// 获取下一个音频帧信息
-        /// </summary>
-        /// <returns></returns>
-        public override AudioPacket GetNextAudioPacket()
-        {
-            int frame_size;
-            if (!this.ParseMP3Frame(this.stream, out frame_size))
-            {
-                return null;
-            }
-
-            AudioPacket packet = new AudioPacket();
-            return packet;
         }
 
         public override bool Close()
@@ -213,6 +199,29 @@ namespace MediaCenter.AVDemuxers
         }
 
         #endregion
+
+        protected override DemuxerPacket DemuxNextPacketCore()
+        {
+            long position;
+            byte[] hdr, frame;
+            if (!ParseMP3Frame(this.stream, out hdr, out frame, out position))
+            {
+                logger.ErrorFormat("NextPacket失败");
+                return null;
+            }
+
+            byte[] data = new byte[hdr.Length + frame.Length];
+            Buffer.BlockCopy(hdr, 0, data, 0, hdr.Length);
+            Buffer.BlockCopy(frame, 0, data, hdr.Length, frame.Length);
+
+            return new AudioDemuxPacket()
+            {
+                Content = frame,
+                Header = hdr,
+                Position = position,
+                Data = data
+            };
+        }
 
         #region 实例方法
 
@@ -223,11 +232,11 @@ namespace MediaCenter.AVDemuxers
         /// <param name="major_version"></param>
         /// <param name="revision"></param>
         /// <param name="flag"></param>
-        /// <param name="size">id3v2标签的大小，不包含footer的大小，如果flags里有footer标志位，则标签大小是tag_size+10</param>
+        /// <param name="size">id3v2标签的大小</param>
+        /// <param name="tag">存储id3v2标签的内容</param>
         /// <returns></returns>
-        private bool ParseID3V2Tag(AbstractAVStream stream, out int major_version, out int revision, out int flag, out int size)
+        private bool ParseID3V2Tag(AbstractAVStream stream, out int major_version, out int revision, out int flag, out int size, out byte[] tag)
         {
-
             /*
              *  ID3V2标签结构：
              *  +-----------------------------+
@@ -246,6 +255,8 @@ namespace MediaCenter.AVDemuxers
              *  
              *  10个字节的Header结构：
              *  +-----------------------------+
+             *  |            ID3              |
+             *  +-----------------------------+
              *  |    major_version(1 bytes)   |
              *  +-----------------------------+
              *  |      revision(1 bytes)      |
@@ -259,32 +270,36 @@ namespace MediaCenter.AVDemuxers
              * header, the padding and the frames after unsynchronisation. If a
              * footer is present this equals to ('total size' - 20) bytes, otherwise
              * ('total size' - 10) bytes.
-             * 
              */
 
             major_version = revision = flag = size = 0;
+            tag = new byte[65535]; // 用64字节的临时空间用来存放tag数据
 
             /* 读取major version */
             major_version = stream.ReadByte();
-            if (major_version == -1 || major_version == 0xFF || major_version == 0xFF)
+            if (major_version == -1 || major_version == 0xFF)
             {
                 return false;
             }
+            tag[0] = (byte)major_version;
 
             /* 读取revision */
             revision = stream.ReadByte();
-            if (revision == -1 || revision == 0xFF || revision == 0xFF)
+            if (revision == -1 || revision == 0xFF)
             {
                 return false;
             }
+            tag[1] = (byte)revision;
 
             /* 读取flags */
             if ((flag = stream.ReadByte()) == -1)
             {
                 return false;
             }
+            tag[2] = (byte)flag;
 
             /* 读取size */
+            int next = 3;
             for (int i = 0; i < 4; i++)
             {
                 int b = stream.ReadByte();
@@ -293,20 +308,21 @@ namespace MediaCenter.AVDemuxers
                     return false;
                 }
                 size = size << 7 | (byte)b;
+                tag[next + i] = (byte)b;
             }
 
             /* 读取id3v2的所有的帧数据 */
-            byte[] frames = new byte[size];
-            if (stream.Read(frames, frames.Length) != size)
+            if (stream.Read(tag, 7, size) != size)
             {
                 return false;
             }
 
-            /* size不包含footer的大小，如果有footer，读取footer */
+            // size不包含footer的大小，如果有footer，读取footer
             if ((flag & (int)ID3V2Flags.FooterPresent) == (int)ID3V2Flags.FooterPresent)
             {
-                byte[] footerBytes = new byte[10];
-                if (stream.Read(footerBytes, footerBytes.Length) != footerBytes.Length)
+                const int footer_size = 10;
+                size += 10;
+                if (stream.Read(tag, 7 + size, footer_size) != footer_size)
                 {
                     return false;
                 }
@@ -317,24 +333,33 @@ namespace MediaCenter.AVDemuxers
 
         /// <summary>
         /// 解析MP3数据帧
+        /// most of code are copied from mplayer
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="frame_size">不包括帧头的大小</param>
+        /// <param name="position">当前帧在AVStream中的位置</param>
         /// <returns></returns>
-        private bool ParseMP3Frame(AbstractAVStream stream, out int frame_size)
+        private bool ParseMP3Frame(AbstractAVStream stream, out byte[] hdr, out byte[] frame, out long position)
         {
-            int bit_rate_index, mpeg, layer, sampling_frequency, padding, stereo = 0, lsf = 0;
-            int bitrate = 0, sample_per_frame = 0, sample_per_second = 0, padding_size = 0;
-            frame_size = 0;
+            hdr = new byte[4];
+            frame = null;
+            position = -1;
+
+            int[] mult = { 12000, 144000, 144000 };
+            int[] freqs = { 44100, 48000, 32000,        // MPEG 1.0
+                            22050, 24000, 16000,        // MPEG 2.0
+                            11025, 12000, 8000};        // MPEG 2.5
+            int bit_rate_index, mpeg, layer, sampling_frequency, padding, stereo = 0, lsf = 0, frame_size = 0, divisor = 0;
+            int bitrate = 0, sample_per_frame = 0, sample_per_second = 0;
 
             #region 查找帧头位置
 
-            byte[] hdr_bytes = new byte[4];
-            if (stream.Read(hdr_bytes, 4) != 4)
+            // 帧头的4字节中高11位全部设置为1（11111111 111xxxxx xxxxxxxx xxxxxxxx），用它作为查找帧的重要依据
+            if (stream.Read(hdr, 4) != 4)
             {
                 return false;
             }
-            uint newhead = (uint)hdr_bytes[0] << 24 | (uint)hdr_bytes[1] << 16 | (uint)hdr_bytes[2] << 8 | (uint)hdr_bytes[3];
+            uint newhead = (uint)hdr[0] << 24 | (uint)hdr[1] << 16 | (uint)hdr[2] << 8 | (uint)hdr[3];
             while ((newhead & 0xFFE00000) != 0xFFE00000)
             {
                 int c = stream.ReadByte();
@@ -343,6 +368,16 @@ namespace MediaCenter.AVDemuxers
                     return false;
                 }
                 newhead = newhead << 8 | (uint)c;
+
+                //hdr[0] = (byte)c;
+                //hdr[1] = hdr[3];
+                //hdr[2] = hdr[2];
+                //hdr[3] = hdr[1];
+
+                hdr[0] = hdr[1];
+                hdr[1] = hdr[2];
+                hdr[2] = hdr[3];
+                hdr[3] = (byte)c;
             }
 
             #endregion
@@ -353,14 +388,7 @@ namespace MediaCenter.AVDemuxers
             mpeg = (int)((newhead >> 19) & 3);
             if (mpeg == 1)
             {
-                return false;
-            }
-            lsf = mpeg == 0 ? 1 : 0;
-
-            /* Layer版本 */
-            layer = (int)(((newhead >> 17) & 3));
-            if (layer == 0)
-            {
+                logger.ErrorFormat("mpeg version error, {0}", mpeg);
                 return false;
             }
 
@@ -368,22 +396,60 @@ namespace MediaCenter.AVDemuxers
             sampling_frequency = (int)((newhead >> 10) & 3);
             if (sampling_frequency == 3)
             {
+                logger.ErrorFormat("sampling_frequency error, {0}", sampling_frequency);
                 return false;
             }
+
+            /* lsf: 低采样率 */
+            if ((newhead & (1 << 20)) > 0)
+            {
+                lsf = (newhead & (1 << 19)) > 0 ? 0 : 1;
+                sampling_frequency += lsf * 3;
+            }
+            else
+            {
+                lsf = 1;
+                sampling_frequency += 6;
+            }
+
+            /* Layer版本 */
+            layer = 4 - (int)(((newhead >> 17) & 3));
+            if (layer == 0)
+            {
+                logger.ErrorFormat("layer error, {0}", layer);
+                return false;
+            }
+
+            /* crc, 0是帧头后没有2个字节的CRC校验值，1是帧头后有2字节的CRC校验值 */
+            bool crc = ((newhead << 8) & 0x80000000) == 0x80000000;
+
+            /* 填充 */
+            padding = (int)(newhead >> 9) & 0x1;
 
             /* 比特率，kbps，1kbit per second，每秒传输比特, 1kbit = 1000bit */
             bit_rate_index = (int)(newhead >> 12) & 0xF;
             bitrate = BitRateTable[lsf, layer - 1, bit_rate_index];
-
-            /* 填充 */
-            padding = (int)(newhead >> 9) & 0x1;
-            padding_size = layer == 3 ? 4 : 1;
+            frame_size = bitrate * mult[layer - 1];
+            divisor = layer == 3 ? (freqs[sampling_frequency] << lsf) : freqs[sampling_frequency];
+            frame_size /= divisor;
+            frame_size += padding;
+            if (layer == 1)
+            {
+                frame_size *= 4;
+            }
+            if (!crc)
+            {
+                frame_size += 2;
+            }
 
             /* 声道模式 */
             stereo = (((newhead >> 6) & 0x3) == 3) ? 1 : 2;
 
-            /* 每帧的采样数, spf, sample per frame */
-            if (layer == 3)
+            /* 采样率 */
+            sample_per_second = freqs[sampling_frequency];
+
+            /* 每帧采样数 */
+            if (layer == 1)
             {
                 sample_per_frame = 384;
             }
@@ -391,70 +457,90 @@ namespace MediaCenter.AVDemuxers
             {
                 sample_per_frame = 1152;
             }
-            else if (layer == 1)
+            else if (sampling_frequency > 2) // not 1.0
             {
-                if (mpeg == 3)
-                {
-                    sample_per_frame = 1152;
-                }
-                else
-                {
-                    sample_per_frame = 576;
-                }
+                sample_per_frame = 576;
+            }
+            else
+            {
+                sample_per_frame = 1152;
             }
 
-            /* 每秒采样数，采样频率 */
-            if (mpeg == 3)
-            {
-                /* mpeg1 */
-                if (sampling_frequency == 0)
-                {
-                    sample_per_second = 44100;
-                }
-                else if (sampling_frequency == 1)
-                {
-                    sample_per_second = 48000;
-                }
-                else if (sampling_frequency == 2)
-                {
-                    sample_per_second = 32000;
-                }
-            }
-            else if (mpeg == 2)
-            {
-                /* mpeg2 */
-                if (sampling_frequency == 0)
-                {
-                    sample_per_second = 22050;
-                }
-                else if (sampling_frequency == 1)
-                {
-                    sample_per_second = 24000;
-                }
-                else if (sampling_frequency == 2)
-                {
-                    sample_per_second = 16000;
-                }
-            }
-            else if (mpeg == 0)
-            {
-                /* mpeg2.5 */
-                if (sampling_frequency == 0)
-                {
-                    sample_per_second = 11205;
-                }
-                else if (sampling_frequency == 1)
-                {
-                    sample_per_second = 12000;
-                }
-                else if (sampling_frequency == 2)
-                {
-                    sample_per_second = 8000;
-                }
-            }
+            ///* 每帧采样数, spf, sample per frame */
+            //if (layer == 3)
+            //{
+            //    sample_per_frame = 384;
+            //}
+            //else if (layer == 2)
+            //{
+            //    sample_per_frame = 1152;
+            //}
+            //else if (layer == 1)
+            //{
+            //    if (mpeg == 3)
+            //    {
+            //        sample_per_frame = 1152;
+            //    }
+            //    else
+            //    {
+            //        sample_per_frame = 576;
+            //    }
+            //}
+
+            ///* 每秒采样数，采样率, sample per second / sample rate */
+            //if (mpeg == 3)
+            //{
+            //    /* mpeg1 */
+            //    if (sampling_frequency == 0)
+            //    {
+            //        sample_per_second = 44100;
+            //    }
+            //    else if (sampling_frequency == 1)
+            //    {
+            //        sample_per_second = 48000;
+            //    }
+            //    else if (sampling_frequency == 2)
+            //    {
+            //        sample_per_second = 32000;
+            //    }
+            //}
+            //else if (mpeg == 2)
+            //{
+            //    /* mpeg2 */
+            //    if (sampling_frequency == 0)
+            //    {
+            //        sample_per_second = 22050;
+            //    }
+            //    else if (sampling_frequency == 1)
+            //    {
+            //        sample_per_second = 24000;
+            //    }
+            //    else if (sampling_frequency == 2)
+            //    {
+            //        sample_per_second = 16000;
+            //    }
+            //}
+            //else if (mpeg == 0)
+            //{
+            //    /* mpeg2.5 */
+            //    if (sampling_frequency == 0)
+            //    {
+            //        sample_per_second = 11205;
+            //    }
+            //    else if (sampling_frequency == 1)
+            //    {
+            //        sample_per_second = 12000;
+            //    }
+            //    else if (sampling_frequency == 2)
+            //    {
+            //        sample_per_second = 8000;
+            //    }
+            //}
 
             /* 帧大小 */
-            frame_size = ((sample_per_frame / 8 * bitrate * 1000) / sample_per_second) + padding_size;
+            position = stream.Position - 4;
+            frame = new byte[frame_size - 4]; // frame_size有帧头数据，减4个字节的帧头
+            stream.Read(frame, frame.Length);
 
             #endregion
 

@@ -86,9 +86,14 @@ namespace MediaCenter.AVStreams
             return ResponseCode.SUCCESS;
         }
 
-        public override int Read(byte[] buff, int size)
+        public override int Read(byte[] buff, int count)
         {
-            return this.stream.Read(buff, 0, size);
+            return this.stream.Read(buff, 0, count);
+        }
+
+        public override int Read(byte[] dst, int dstOffset, int count)
+        {
+            return this.stream.Read(dst, dstOffset, count);
         }
 
         public override int ReadByte()

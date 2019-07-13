@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kagura.Player.Base
+namespace MediaCenter.Base.AVDemuxers
 {
     public static class DemuxerRegistry
     {
@@ -18,14 +18,14 @@ namespace Kagura.Player.Base
         /// <summary>
         /// DemuxerName -> Demuxer Instance
         /// </summary>
-        private static Dictionary<string, Demuxer> demuxerMap = new Dictionary<string, Demuxer>();
+        private static Dictionary<string, AbstractAVDemuxer> demuxerMap = new Dictionary<string, AbstractAVDemuxer>();
 
         static DemuxerRegistry()
         {
 
         }
 
-        public static bool FindDemuxer(string demuxer_name, out Demuxer demuxer)
+        public static bool FindDemuxer(string demuxer_name, out AbstractAVDemuxer demuxer)
         {
             if (!demuxerMap.TryGetValue(demuxer_name, out demuxer))
             {
@@ -38,7 +38,7 @@ namespace Kagura.Player.Base
 
                 try
                 {
-                    demuxer = ConfigFactory<Demuxer>.CreateInstance<Demuxer>(classEntry);
+                    demuxer = ConfigFactory<AbstractAVDemuxer>.CreateInstance<AbstractAVDemuxer>(classEntry);
                 }
                 catch (Exception ex)
                 {
@@ -52,7 +52,7 @@ namespace Kagura.Player.Base
             return true;
         }
 
-        public static IEnumerable<Demuxer> GetAllDemuxers()
+        public static IEnumerable<AbstractAVDemuxer> GetAllDemuxers()
         {
             throw new NotImplementedException();
         }

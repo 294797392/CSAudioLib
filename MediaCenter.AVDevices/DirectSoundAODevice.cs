@@ -1,6 +1,6 @@
 ﻿using DirectSoundLib;
 using Kagura.Player.Base;
-using Kagura.Player.Base.AODevice;
+using MediaCenter.Base.AVDevices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Kagura.Player.Audio
+namespace MediaCenter.AVDevices
 {
-    public class DirectSoundAODevice : AudioDevice
+    public class DirectSoundAODevice : AbstractAODevice
     {
         #region 事件
 
@@ -85,8 +85,13 @@ namespace Kagura.Player.Audio
 
         #region 公开接口
 
+        [DllImport("user32.dll", EntryPoint = "GetDesktopWindow", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern IntPtr GetDesktopWindow();
+
         public override bool Open(WaveFormat af)
         {
+            this.windowHandle = GetDesktopWindow();
+
             this.audioFormat = af;
 
             #region 创建DirectSound对象
@@ -154,7 +159,7 @@ namespace Kagura.Player.Audio
             return true;
         }
 
-        public override bool Play(byte[] data)
+        public override int Play(byte[] data)
         {
             uint play_offset;
             uint write_cursor;
@@ -167,7 +172,7 @@ namespace Kagura.Player.Audio
             if (space > buffer_size) space -= buffer_size; // write_offset < play_offset
             if (space < len) len = space;
 
-            return this.WriteDataToBuffer(data);
+            return this.WriteDataToBuffer(data, len);
         }
 
         public override int GetFreeSpaceSize()
@@ -265,52 +270,35 @@ namespace Kagura.Player.Audio
         //    return true;
         //}
 
-        private bool WriteDataToBuffer(byte[] data)
+        private int WriteDataToBuffer(byte[] data, int len)
         {
             IntPtr audioPtr1, audioPtr2;
-            int audioBytes1, audioBytes2, dataLength = data.Length;
+            int audioBytes1, audioBytes2, dataLength = len;
 
-            int dsErr = this.dsb8.Lock(this.write_offset, dataLength, out audioPtr1, out audioBytes1, out audioPtr2, out audioBytes2, 0);
+            uint dsErr = (uint)this.dsb8.Lock(this.write_offset, dataLength, out audioPtr1, out audioBytes1, out audioPtr2, out audioBytes2, 0);
             if (dsErr == DSERR.DSERR_BUFFERLOST)
             {
                 this.dsb8.Restore();
-                dsErr = this.dsb8.Lock(this.write_offset, dataLength, out audioPtr1, out audioBytes1, out audioPtr2, out audioBytes2, 0);
+                dsErr = (uint)this.dsb8.Lock(this.write_offset, dataLength, out audioPtr1, out audioBytes1, out audioPtr2, out audioBytes2, 0);
                 if (dsErr != DSERR.DS_OK)
                 {
                     logger.ErrorFormat("Lock失败, DSERR = {0}", dsErr);
-                    return false;
+                    return -1;
                 }
             }
 
-            if (data != null && data.Length > 0)
-            {
-                Marshal.Copy(data, 0, audioPtr1, (int)audioBytes1);
-                if (audioBytes2 > 0 && audioPtr2 != IntPtr.Zero)
-                {
-                    Marshal.Copy(data, (int)audioBytes1, audioPtr2, (int)audioBytes2);
-                }
-            }
-            else
-            {
-                // 填充空数据
-                //DSLibNatives.memset(audioPtr1, 0, audioBytes1);
-                //if (audioPtr2 != IntPtr.Zero)
-                //{
-                //    DSLibNatives.memset(audioPtr2, 0, audioBytes2);
-                //}
-            }
+            Marshal.Copy(data, 0, audioPtr1, (int)audioBytes1);
 
+
+            if (audioPtr2 != IntPtr.Zero) Marshal.Copy(data, (int)audioBytes1, audioPtr2, (int)audioBytes2);
             this.write_offset += audioBytes1 + audioBytes2;
-            if (this.write_offset >= this.buffer_size)
-            {
-                write_offset = audioBytes2;
-            }
+            if (this.write_offset >= this.buffer_size) write_offset = audioBytes2;
 
-            dsErr = this.dsb8.Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
+            dsErr = (uint)this.dsb8.Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
             if (dsErr != DSERR.DS_OK)
             {
                 logger.ErrorFormat("Unlock失败, DSERR = {0}", dsErr);
-                return false;
+                return -1;
             }
 
             int status;
@@ -320,7 +308,7 @@ namespace Kagura.Player.Audio
                 this.dsb8.Play(0, 0, DSBPLAY.DSBPLAY_LOOPING);
             }
 
-            return true;
+            return audioBytes1 + audioBytes2;
         }
 
         #endregion

@@ -1,3 +1,19 @@
+
+## 播放流程
 1.mplayer.c 3253 open_stream
 2.mplayer.c 3387 demux_open
 3.mplayer.c 3781 fill_audio_out_buffers
+
+
+## 解码流程
+ad_mpg123.c
+1.decode_a_bit
+2.ds_get_packet_pts -> ds_get_packet_pts_endpts -> ds_get_packet -> ds_fill_buffer -> demux_fill_buffer
+3.decode_a_bit
+decode使用demuxer_stream里保存的数据进行解码，如果demuxer_stream里的数据不足够decoder使用，那么decoder会调用demuxer去填充demuxer_stream
+
+## pts计算
+sh_audio->audio.dwScale/(double)sh_audio->samplerate;
+其中：
+sh_audio->audio.dwScale=mp3_found->mpa_spf;
+sh_audio->samplerate=？

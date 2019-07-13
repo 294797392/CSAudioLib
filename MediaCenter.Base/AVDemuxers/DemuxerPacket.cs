@@ -3,23 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kagura.Player.Base
+namespace MediaCenter.Base.AVDemuxers
 {
     /// <summary>
     /// 存储一帧的媒体数据信息
     /// </summary>
     public abstract class DemuxerPacket
     {
-        public int Offset { get; set; }
+        /// <summary>
+        /// Packet在AVStream中的位置
+        /// </summary>
+        public long Position { get; set; }
 
-        public int Length { get; set; }
+        /// <summary>
+        /// Packet的内容
+        /// 一般都是帧的数据部分
+        /// </summary>
+        public byte[] Content { get; set; }
 
-        public byte[] Frame { get; set; }
-
+        /// <summary>
+        /// Packet的头部内容
+        /// 一般都是帧头数据
+        /// </summary>
         public byte[] Header { get; set; }
+
+        /// <summary>
+        /// Header和Content合在一起的数据
+        /// </summary>
+        public byte[] Data { get; set; }
     }
 
-    public class AudioPacket : DemuxerPacket
+    public class AudioDemuxPacket : DemuxerPacket
     {
 
     }

@@ -7,7 +7,7 @@ using System.Text;
 namespace MediaCenter.Base
 {
     /// <summary>
-    /// 提供控制音频流的接口
+    /// 音视频流输入源
     /// </summary>
     public abstract class AbstractAVStream
     {
@@ -46,14 +46,23 @@ namespace MediaCenter.Base
         /// <summary>
         /// 读取音频流
         /// </summary>
-        /// <param name="buff">存储数据的缓冲区</param>
-        /// <param name="size">要读取的数据大小</param>
+        /// <param name="dst">存储数据的缓冲区</param>
+        /// <param name="count">要读取的数据大小</param>
         /// <returns>
         /// 读取的数据大小
         /// 返回0表示到流的末尾
         /// 大于0表示读取的字节数
         /// </returns>
-        public abstract int Read(byte[] buff, int size);
+        public abstract int Read(byte[] dst, int count);
+
+        /// <summary>
+        /// 读取流数据
+        /// </summary>
+        /// <param name="dst"></param>
+        /// <param name="dstOffset"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public abstract int Read(byte[] dst, int dstOffset, int count);
 
         /// <summary>
         /// 读取一个字节的数据

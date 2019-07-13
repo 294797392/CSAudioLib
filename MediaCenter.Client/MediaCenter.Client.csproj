@@ -111,6 +111,14 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MediaCenter.AVCodecs\MediaCenter.AVCodecs.csproj">
+      <Project>{2ea2b40a-bc7b-4bcc-bff0-0db298265701}</Project>
+      <Name>MediaCenter.AVCodecs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaCenter.AVDevices\MediaCenter.AVDevices.csproj">
+      <Project>{def5bdd2-49e1-4821-917d-66fbb3622c05}</Project>
+      <Name>MediaCenter.AVDevices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MediaCenter.Base\MediaCenter.Base.csproj">
       <Project>{1f787331-23cc-4464-831d-e43005f35932}</Project>
       <Name>MediaCenter.Base</Name>

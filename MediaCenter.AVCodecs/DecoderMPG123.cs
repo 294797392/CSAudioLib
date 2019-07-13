@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MediaCenter.Base;
+using MediaCenter.Base.AVCodecs;
+using MediaCenter.Base.AVDemuxers;
+using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using Kagura.Player.Base;
 
 namespace MediaCenter.AVCodecs
 {
-    public class DecoderMPG123 : AudioDecoder
+    public class DecoderMPG123 : AbstractAVDecoder
     {
         #region 类变量
 
         private static log4net.ILog logger = log4net.LogManager.GetLogger("DecoderMPG123");
+
+        public const int MAX_PROBE_TIMES = 10;
 
         #endregion
 
         #region 实例变量
 
         private IntPtr mpg123Handle;
+        private AbstractAVDemuxer demuxer;
 
         #endregion
 
@@ -34,8 +36,10 @@ namespace MediaCenter.AVCodecs
 
         #region 公开接口
 
-        public override bool Open()
+        public override bool Open(AbstractAVDemuxer demuxer)
         {
+            #region 初始化mpg123句柄
+
             int error;
             if ((this.mpg123Handle = mpg123.mpg123_new(IntPtr.Zero, out error)) == IntPtr.Zero)
             {
@@ -43,15 +47,60 @@ namespace MediaCenter.AVCodecs
                 return false;
             }
 
+            if ((error = mpg123.mpg123_open_feed(this.mpg123Handle)) != mpg123.MPG123_OK)
+            {
+                logger.ErrorFormat("mpg123_open_feed失败, {0}", error);
+                return false;
+            }
+
+            #endregion
+
+            #region 探测流格式
+
+            IntPtr container_hdr_ptr = Marshal.UnsafeAddrOfPinnedArrayElement(demuxer.ContainerHeader, 0);
+            if ((error = mpg123.mpg123_feed(this.mpg123Handle, container_hdr_ptr, demuxer.ContainerHeader.Length)) != mpg123.MPG123_OK)
+            {
+                logger.ErrorFormat("mpg123_feed ContainerHeader失败, {0}", error);
+                return false;
+            }
+
+            /* 如果当前没有解析数据帧，则读取一帧数据 */
+            AudioDemuxPacket packet = null;
+            if (demuxer.CurrentPacket == null)
+            {
+                if (!demuxer.DemuxNextPacket<AudioDemuxPacket>(out packet))
+                {
+                    logger.ErrorFormat("NextPacket失败");
+                    return false;
+                }
+            }
+
+            int total_probe_times = 0;
+            int rate, channel, encoding;
+            do
+            {
+                IntPtr frameptr = Marshal.UnsafeAddrOfPinnedArrayElement(packet.Data, 0);
+                if ((error = mpg123.mpg123_feed(this.mpg123Handle, frameptr, packet.Data.Length)) != mpg123.MPG123_OK)
+                {
+                    logger.ErrorFormat("feed数据失败, {0}", error);
+                    return false;
+                }
+
+                if (total_probe_times++ > MAX_PROBE_TIMES)
+                {
+                    logger.ErrorFormat("Open超时");
+                    return false;
+                }
+            }
+            while ((error = mpg123.mpg123_getformat(this.mpg123Handle, out rate, out channel, out encoding)) != mpg123.MPG123_OK);
+
+            logger.InfoFormat("OpenDemuxer成功, rate={0}, channel={1}, encoding={2}", rate, channel, encoding);
+
+            #endregion
+
+            this.demuxer = demuxer;
+
             return true;
-        }
-
-        public override byte[] DecodeFrame(AudioPacket packet)
-        {
-            //IntPtr in_data = Marshal.UnsafeAddrOfPinnedArrayElement(packet.Frame, 0);
-            //mpg123.mpg123_decode(this.mpg123Handle, in_data, packet.Frame.Length,)
-
-            throw new NotImplementedException();
         }
 
         public override bool Close()
@@ -59,12 +108,12 @@ namespace MediaCenter.AVCodecs
             throw new NotImplementedException();
         }
 
-        public override bool IsSupported(AudioFormats formats)
+        public override bool IsSupported(AVFormats formats)
         {
             switch (formats)
             {
-                case AudioFormats.MP3:
-                case AudioFormats.AAC:
+                case AVFormats.MP3:
+                case AVFormats.AAC:
                     return true;
                 default:
                     return false;
@@ -72,6 +121,50 @@ namespace MediaCenter.AVCodecs
         }
 
         #endregion
+
+        protected override bool DecodeDataCore(int target_size, out byte[] out_data, out int out_size)
+        {
+            out_size = 0;
+            out_data = new byte[target_size + 65535];
+            int total_decode = 0;
+            int remain = target_size;
+            while (true)
+            {
+                int done = 0;
+                byte[] tmpbuf = new byte[remain];
+                IntPtr tmpptr = Marshal.UnsafeAddrOfPinnedArrayElement(tmpbuf, 0);
+                int ret = mpg123.mpg123_read(this.mpg123Handle, tmpptr, tmpbuf.Length, out done);
+                if (done == 0 && ret == mpg123.MPG123_ERR)
+                {
+                    logger.ErrorFormat("mpg123_read失败, {0}", ret);
+                    return false;
+                }
+
+                Buffer.BlockCopy(tmpbuf, 0, out_data, total_decode, done);
+                total_decode += done;
+                remain -= done;
+
+                /* 解码的数据不够，继续解析音频帧然后解码 */
+                if (total_decode < target_size)
+                {
+                    AudioDemuxPacket packet = null;
+                    if (!this.demuxer.DemuxNextPacket<AudioDemuxPacket>(out packet))
+                    {
+                        return false;
+                    }
+
+                    IntPtr frameptr = Marshal.UnsafeAddrOfPinnedArrayElement(packet.Data, 0);
+                    if ((ret = mpg123.mpg123_feed(this.mpg123Handle, frameptr, packet.Data.Length)) != mpg123.MPG123_OK)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
 
         private enum mpg123_enc_enum
         {
@@ -276,6 +369,9 @@ namespace MediaCenter.AVCodecs
             /// <returns></returns>
             [DllImport(DLLNAME_LIBMPG123, CallingConvention = CallingConvention.Cdecl)]
             public static extern int mpg123_length(IntPtr mg);
+
+            [DllImport(DLLNAME_LIBMPG123, CallingConvention = CallingConvention.Cdecl)]
+            public static extern int mpg123_read(IntPtr mg, IntPtr outmemory, int outmemsize, out int done);
         }
     }
 }

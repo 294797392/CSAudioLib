@@ -47,16 +47,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AVDevices\AudioDevice.cs" />
-    <Compile Include="AudioFormats.cs" />
-    <Compile Include="AVCodecs\AudioDecoder.cs" />
+    <Compile Include="AVContext.cs" />
+    <Compile Include="AVDevices\AbstractAODevice.cs" />
+    <Compile Include="AVFormats.cs" />
+    <Compile Include="AVCodecs\AbstractAVDecoder.cs" />
     <Compile Include="AVDemuxers\DemuxerPacket.cs" />
     <Compile Include="AVDemuxers\DemuxerRegistry.cs" />
     <Compile Include="AVDemuxers\DemuxerEvent.cs" />
-    <Compile Include="AVDemuxers\Demuxer.cs" />
+    <Compile Include="AVDemuxers\AbstractAVDemuxer.cs" />
     <Compile Include="AVDemuxers\DemuxerLookup.cs" />
-    <Compile Include="AVDemuxers\MPG123Parser.cs" />
-    <Compile Include="ID3Tag\ID3V2Flags.cs" />
+    <Compile Include="ID3\ID3V2Flags.cs" />
     <Compile Include="KPlayer.cs" />
     <Compile Include="AVStreams\StreamType.cs" />
     <Compile Include="AVStreams\StreamLookup.cs" />

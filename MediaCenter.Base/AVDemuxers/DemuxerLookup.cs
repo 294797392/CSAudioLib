@@ -5,16 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Kagura.Player.Base
+namespace MediaCenter.Base.AVDemuxers
 {
     public class DemuxerLookup
     {
         private static log4net.ILog logger = log4net.LogManager.GetLogger("DemuxerLookup");
 
-        public Demuxer Lookup(AbstractAVStream stream)
+        public AbstractAVDemuxer Lookup(AbstractAVStream stream)
         {
             string demuxer_name;
-            Demuxer demuxer;
+            AbstractAVDemuxer demuxer;
 
             // 1.根据文件后缀名查找Demuxer
             //string extension;
